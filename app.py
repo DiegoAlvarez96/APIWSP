@@ -13,7 +13,7 @@ def webhook():
         mode = request.args.get("hub.mode")
 
         if token == VERIFY_TOKEN and mode == "subscribe":
-            return challenge, 200
+            return str(challenge), 200, {"Content-Type": "text/plain"}
         else:
             return "Token inválido", 403
 
