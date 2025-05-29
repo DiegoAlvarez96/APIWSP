@@ -5,9 +5,9 @@ app = Flask(__name__)
 VERIFY_TOKEN = "tutoken123"  # Este debe coincidir con lo que pusiste en Meta
 
 @app.route("/webhook", methods=["GET", "POST"])
+@app.route("/webhook", methods=["GET", "POST"])
 def webhook():
     if request.method == "GET":
-        # Verificación de Meta
         token = request.args.get("hub.verify_token")
         challenge = request.args.get("hub.challenge")
         mode = request.args.get("hub.mode")
@@ -19,5 +19,18 @@ def webhook():
 
     if request.method == "POST":
         data = request.get_json()
-        print("📩 Mensaje recibido:", data)
+        print("📥 Webhook recibido:", json.dumps(data, indent=2))
+
+        if data.get("object") == "whatsapp_business_account":
+            for entry in data.get("entry", []):
+                for change in entry.get("changes", []):
+                    value = change.get("value")
+                    messages = value.get("messages")
+                    if messages:
+                        for msg in messages:
+                            numero = msg["from"]
+                            texto = msg.get("text", {}).get("body", "")
+                            print(f"📨 Mensaje de {numero}: {texto}")
+                            # Podés guardar esto, responder, disparar acciones, etc.
+
         return "OK", 200
