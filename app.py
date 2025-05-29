@@ -1,5 +1,5 @@
 from flask import Flask, request
-
+import json
 app = Flask(__name__)
 
 VERIFY_TOKEN = "tutoken123"  # Este debe coincidir con lo que pusiste en Meta
