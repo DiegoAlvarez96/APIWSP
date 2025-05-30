@@ -46,14 +46,14 @@ from openai import OpenAI
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def consultar_chatgpt(texto_usuario):
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini",  # O gpt-3.5-turbo o el que quieras
         messages=[
-            {"role": "system", "content": "Sos un asistente amable y directo."},
+            {"role": "system", "content": "Sos un asistente eficiente y directo."},
             {"role": "user", "content": texto_usuario}
         ]
     )
-    return response.choices[0].message.content
+    return completion.choices[0].message.content
 
 def enviar_respuesta_whatsapp(numero, mensaje):
     url = f"https://graph.facebook.com/v19.0/{WHATSAPP_PHONE_ID}/messages"
