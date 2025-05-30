@@ -39,16 +39,19 @@ def webhook():
 
         return "ok", 200
 
+from openai import OpenAI
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 def consultar_chatgpt(texto_usuario):
-    response = openai.ChatCompletion.create(
-        model="gpt-4",  # o gpt-4 si tenés acceso
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "Sos un asistente amable y directo."},
             {"role": "user", "content": texto_usuario}
-        ],
-        temperature=0.7,
+        ]
     )
-    return response['choices'][0]['message']['content']
+    return response.choices[0].message.content
 
 def enviar_respuesta_whatsapp(numero, mensaje):
     url = f"https://graph.facebook.com/v19.0/{WHATSAPP_PHONE_ID}/messages"
