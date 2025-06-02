@@ -9,3 +9,4 @@ pandas
 PyMuPDF  # Para leer PDFs
 python-dotenv
 requests
+openpyxl
