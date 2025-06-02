@@ -3,3 +3,9 @@ gunicorn==20.1.0
 requests
 python-dotenv
 openai
+chromadb
+tiktoken
+pandas
+PyMuPDF  # Para leer PDFs
+python-dotenv
+requests
