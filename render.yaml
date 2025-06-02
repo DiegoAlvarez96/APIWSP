@@ -1,7 +1,17 @@
 services:
   - type: web
-    name: whatsapp-webhook
+    name: chatgpt-wsp-rag
     env: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app"
-    plan: free
+    region: oregon  # podés cambiar a "frankfurt" si querés que esté en Europa
+    buildCommand: pip install -r requirements.txt
+    startCommand: TOKENIZERS_PARALLELISM=false gunicorn app:app --timeout 90
+    envVars:
+      - key: OPENAI_API_KEY
+        value: {{ YOUR_OPENAI_API_KEY }}
+      - key: WHATSAPP_TOKEN
+        value: {{ YOUR_WHATSAPP_TOKEN }}
+      - key: WHATSAPP_PHONE_ID
+        value: {{ YOUR_PHONE_ID }}
+      - key: VERIFY_TOKEN
+        value: {{ YOUR_VERIFY_TOKEN }}
+    autoDeploy: true
