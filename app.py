@@ -33,8 +33,8 @@ def webhook():
             telefono = mensaje['from']
 
             # Mandar a ChatGPT
-            #respuesta = consultar_chatgpt(texto)
-            responder_con_rag(texto)
+            respuesta = consultar_chatgpt(texto)
+            #responder_con_rag(texto)
 
             # Responder por WhatsApp
             enviar_respuesta_whatsapp(telefono, respuesta)
