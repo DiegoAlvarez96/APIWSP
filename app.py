@@ -2,9 +2,10 @@ from flask import Flask, request, jsonify
 import requests
 import openai
 import os
-
+from procesador_rag import construir_indice
 
 app = Flask(__name__)
+construir_indice()
 
 # Configuraciones
 #WHATSAPP_TOKEN = ""
@@ -32,13 +33,14 @@ def webhook():
             telefono = mensaje['from']
 
             # Mandar a ChatGPT
-            respuesta = consultar_chatgpt(texto)
+            #respuesta = consultar_chatgpt(texto)
+            responder_con_rag(texto)
 
             # Responder por WhatsApp
             enviar_respuesta_whatsapp(telefono, respuesta)
 
         except Exception as e:
-            print("Error:", e)
+            print("❌ Error en webhook:", e)
 
         return "ok", 200
 
