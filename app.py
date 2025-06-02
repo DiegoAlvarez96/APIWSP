@@ -71,5 +71,21 @@ def enviar_respuesta_whatsapp(numero, mensaje):
     r = requests.post(url, headers=headers, json=payload)
     print("Respuesta WhatsApp:", r.status_code, r.text)
 
+from procesador_rag import buscar_contexto
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+def responder_con_rag(pregunta_usuario):
+    contexto = buscar_contexto(pregunta_usuario)
+
+    respuesta = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": f"Respondé solo con esta información:\n{contexto}"},
+            {"role": "user", "content": pregunta_usuario}
+        ]
+    )
+    return respuesta.choices[0].message.content
+
 if __name__ == '__main__':
     app.run(debug=True)
