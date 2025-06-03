@@ -79,9 +79,9 @@ def webhook():
     
         try:
             valor = data['entry'][0]['changes'][0]['value']
-
-            if "messages" in valor:
-                mensaje = valor['messages'][0]
+            mensaje = valor['messages'][0]
+            
+            if "messages" in valor:   
                 if mensaje.get("type") == "text":
                     texto = mensaje['text']['body']
                     telefono = mensaje['from']
@@ -116,14 +116,15 @@ def webhook():
                         return "ok", 200
                         # Usamos RAG
                         #respuesta = responder_con_rag(texto)
-                        
+                    else:
+                    
                         #directo a apichat gpt
                         #estructrua = "en el siguiente texto deberia contener almenos un numero de comitente, un nombre de fondo comun de inversion, una operacion SUSCRIPCION/RESCATE, y un monto o cantidad, en caos de faltar esa informacion por favor respondeme con el dato faltante, en caos de que la informacion este toda respondeme con esa informacion resumida asi: OPERACION: (suscripcion/rescate); COMITENTE:(numero); NOMBRE FCI:(nombre); IMPORTE o CANTIDAD: (NUMERO). EL TEXTO A CONTINUACION: "
                         respuesta = consultar_chatgpt(prompt_base + texto)
                         # Enviamos respuesta por WhatsApp
                         enviar_respuesta_whatsapp(telefono, respuesta)
-                    else:
-                        print("📭 No hay mensaje entrante.")
+                else:
+                    print("📭 No hay mensaje entrante.")
                 
             else:
                 print("📎 Evento recibido, pero no es mensaje de texto:", mensaje.get("type"))
