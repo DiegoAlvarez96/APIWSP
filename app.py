@@ -4,6 +4,8 @@ import openai
 import os
 from procesador_rag import construir_indice
 import sys
+from datetime import datetime, timedelta
+
 
 app = Flask(__name__)
 construir_indice()
@@ -14,6 +16,18 @@ WHATSAPP_TOKEN = os.getenv("WHATSAPP_TOKEN")
 WHATSAPP_PHONE_ID = "600271346513044"
 #OPENAI_API_KEY = ""
 NUMEROS_PERMITIDOS = {"5492664745297", "5491122334455"}
+usuarios = {}  # {telefono: timestamp}
+prompt_base = (
+    "Analizá el siguiente texto y verificá si contiene toda esta información obligatoria:\n"
+    "- Número de comitente\n"
+    "- Nombre del fondo común de inversión\n"
+    "- Tipo de operación (SUSCRIPCIÓN o RESCATE)\n"
+    "- Monto o cantidad (según el tipo de operación)\n\n"
+    "Si falta alguno de estos datos, respondé indicando cuál o cuáles faltan y pedí esa información específicamente.\n"
+    "los datos que envio en el ultimo mensaje recuerdalos porque probablemnte se envien solo los faltantes y deberas añadirlos.\n"
+    "Si todos los datos están presentes, respondé con el siguiente formato exacto:\n\n"
+    "OPERACIÓN: (SUSCRIPCIÓN o RESCATE); COMITENTE: (número); NOMBRE FCI: (nombre); IMPORTE o CANTIDAD: (número)\n\n"
+)
 
 
 
@@ -39,30 +53,33 @@ def webhook():
                 mensaje = valor['messages'][0]
                 texto = mensaje['text']['body']
                 telefono = mensaje['from']
-
+                limpiar_usuarios()
             
                 if telefono in NUMEROS_PERMITIDOS:
-                    enviar_respuesta_whatsapp(telefono, "✅ Bienvenido")
+                    num = "Autorizado"
+                    #enviar_respuesta_whatsapp(telefono, "✅ Bienvenido")
                 else:
                     enviar_respuesta_whatsapp(telefono, "❌ No tiene permisos.")
                     sys.exit(1)
+                
 
                 
                 # Si es el primer mensaje (tipo "text") sin contexto
-                if mensaje.get("type") == "text" and not mensaje.get("context"):
+                if telefono not in usuarios:
                     mensaje_bienvenida = (
                         "¡Hola! Soy tu asistente virtual 🤖\n"
                         "Solo respondo en base a información validada por la empresa.\n"
-                        "Podés preguntarme sobre políticas, contacto, horarios, etc. 😊"
+                        "actualmente solo tabulo informacion de operaciones de FCI. 😊"
                     )
                     enviar_respuesta_whatsapp(telefono, mensaje_bienvenida)
+                    usuarios[telefono] = datetime.now()
     
                 # Usamos RAG
                 #respuesta = responder_con_rag(texto)
                 
                 #directo a apichat gpt
-                estructrua = "en el siguiente texto deberia contener almenos un numero de comitente, un nombre de fondo comun de inversion, una operacion SUSCRIPCION/RESCATE, y un monto o cantidad, en caos de faltar esa informacion por favor respondeme con el dato faltante, en caos de que la informacion este toda respondeme con esa informacion resumida asi: OPERACION: (suscripcion/rescate); COMITENTE:(numero); NOMBRE FCI:(nombre); IMPORTE o CANTIDAD: (NUMERO). EL TEXTO A CONTINUACION: "
-                respuesta = consultar_chatgpt(estructrua + texto)
+                #estructrua = "en el siguiente texto deberia contener almenos un numero de comitente, un nombre de fondo comun de inversion, una operacion SUSCRIPCION/RESCATE, y un monto o cantidad, en caos de faltar esa informacion por favor respondeme con el dato faltante, en caos de que la informacion este toda respondeme con esa informacion resumida asi: OPERACION: (suscripcion/rescate); COMITENTE:(numero); NOMBRE FCI:(nombre); IMPORTE o CANTIDAD: (NUMERO). EL TEXTO A CONTINUACION: "
+                respuesta = consultar_chatgpt(prompt_base + texto)
                 # Enviamos respuesta por WhatsApp
                 enviar_respuesta_whatsapp(telefono, respuesta)
             else:
@@ -117,6 +134,14 @@ def responder_con_rag(pregunta_usuario):
         ]
     )
     return respuesta.choices[0].message.content
+
+#memoria de chat iniciados
+def limpiar_usuarios():
+    ahora = datetime.now()
+    expirados = [tel for tel, ts in usuarios.items() if ahora - ts > timedelta(hours=8)]
+    for tel in expirados:
+        del usuarios[tel]
+
 
 if __name__ == '__main__':
     app.run(debug=True)
