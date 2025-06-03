@@ -13,6 +13,9 @@ construir_indice()
 WHATSAPP_TOKEN = os.getenv("WHATSAPP_TOKEN")
 WHATSAPP_PHONE_ID = "600271346513044"
 #OPENAI_API_KEY = ""
+NUMEROS_PERMITIDOS = {"5492664745297", "5491122334455"}
+
+
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -31,11 +34,11 @@ def webhook():
         try:
             valor = data['entry'][0]['changes'][0]['value']
             telefono = mensaje['from']
-            if telefono == "5492664745297":
-            enviar_respuesta_whatsapp(telefono, "numero aprobado")
-            Else
-            enviar_respuesta_whatsapp(telefono, "no cuenta con permisos por favor no escriba")
-            sys.exit(1)
+            if telefono in NUMEROS_PERMITIDOS:
+                enviar_respuesta_whatsapp(telefono, "✅ Bienvenido")
+            else:
+                enviar_respuesta_whatsapp(telefono, "❌ No tiene permisos.")
+                sys.exit(1)
             
             if "messages" in valor:
                 mensaje = valor['messages'][0]
