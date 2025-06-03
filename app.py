@@ -37,8 +37,10 @@ def webhook():
                 telefono = mensaje['from']
     
                 # Usamos RAG
-                respuesta = responder_con_rag(texto)
-    
+                #respuesta = responder_con_rag(texto)
+                
+                #directo a apichat gpt
+                respuesta = consultar_chatgpt(texto)
                 # Enviamos respuesta por WhatsApp
                 enviar_respuesta_whatsapp(telefono, respuesta)
             else:
