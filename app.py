@@ -105,7 +105,8 @@ def webhook():
                     )
                     enviar_respuesta_whatsapp(telefono, mensaje_bienvenida)
                     usuarios[telefono] = datetime.now()
-                    sys.exit(1)
+                    guardar_usuarios()
+                    return "ok", 200
                 # Usamos RAG
                 #respuesta = responder_con_rag(texto)
                 
