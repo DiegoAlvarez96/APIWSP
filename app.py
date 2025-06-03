@@ -31,7 +31,7 @@ def webhook():
         try:
             valor = data['entry'][0]['changes'][0]['value']
             telefono = mensaje['from']
-            if telefono == "5492664745297"
+            if telefono == "5492664745297":
             enviar_respuesta_whatsapp(telefono, "numero aprobado")
             Else
             enviar_respuesta_whatsapp(telefono, "no cuenta con permisos por favor no escriba")
