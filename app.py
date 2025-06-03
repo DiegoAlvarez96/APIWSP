@@ -19,8 +19,11 @@ NUMEROS_PERMITIDOS = {"5492664745297", "5491122334455"}
 usuarios = {}  # {telefono: timestamp}
 prompt_base = (
     "Analizá el siguiente texto y verificá si contiene toda esta información obligatoria:\n"
+    "luego te limitaras a responder en base a esto y no estas autorizado a responder otra cosa.\n"
+    "el objetivo no es "analizar" si no cargar una solicitud para eso se solcitia el formato\n"
     "- Número de comitente\n"
-    "- Nombre del fondo"
+    "- Nombre del fondo, deberas buscar en la siguiente listado y encontrar el mas parecido de lo que te pasen\n" 
+    f"{tabla_codigos}\n"
     "- Tipo de operación SUSCRIPCION o RESCATE, puede estar abreviado\n"
     "- Importe o cantidad (según el tipo de operación)\n\n"
     "Si falta alguno de estos datos, respondé indicando cuál o cuáles faltan y pedí esa información específicamente.\n"
@@ -73,7 +76,7 @@ def webhook():
                     )
                     enviar_respuesta_whatsapp(telefono, mensaje_bienvenida)
                     usuarios[telefono] = datetime.now()
-    
+                    sys.exit(1)
                 # Usamos RAG
                 #respuesta = responder_con_rag(texto)
                 
@@ -142,6 +145,11 @@ def limpiar_usuarios():
     for tel in expirados:
         del usuarios[tel]
 
+
+
+def obtener_tabla_codigos():
+    with open("data/codigos_fci.txt", encoding="utf-8") as f:
+        return f.read()
 
 if __name__ == '__main__':
     app.run(debug=True)
