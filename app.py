@@ -17,6 +17,12 @@ WHATSAPP_PHONE_ID = "600271346513044"
 #OPENAI_API_KEY = ""
 NUMEROS_PERMITIDOS = {"5492664745297", "5491122334455"}
 usuarios = {}  # {telefono: timestamp}
+
+def obtener_tabla_codigos():
+    with open("data/codigos_fci.txt", encoding="utf-8") as f:
+        return f.read()
+
+
 tabla_codigos = obtener_tabla_codigos()
 prompt_base = (
     "Analizá el siguiente texto y verificá si contiene toda esta información obligatoria:\n"
@@ -147,10 +153,6 @@ def limpiar_usuarios():
         del usuarios[tel]
 
 
-
-def obtener_tabla_codigos():
-    with open("data/codigos_fci.txt", encoding="utf-8") as f:
-        return f.read()
 
 if __name__ == '__main__':
     app.run(debug=True)
