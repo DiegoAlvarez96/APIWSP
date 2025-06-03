@@ -80,13 +80,13 @@ def webhook():
         try:
             valor = data['entry'][0]['changes'][0]['value']
 
-
-            if mensaje.get("type") == "text":
-                texto = mensaje['text']['body']
-                telefono = mensaje['from']
-                
+            if "messages" in valor:
+                if mensaje.get("type") == "text":
+                    texto = mensaje['text']['body']
+                    telefono = mensaje['from']
+                    
                 # → Acá va tu lógica normal (usuarios, bienvenida, respuesta, etc.)
-                if "messages" in valor:
+               
                     mensaje = valor['messages'][0]
                     texto = mensaje['text']['body']
                     telefono = mensaje['from']
@@ -120,8 +120,8 @@ def webhook():
                     respuesta = consultar_chatgpt(prompt_base + texto)
                     # Enviamos respuesta por WhatsApp
                     enviar_respuesta_whatsapp(telefono, respuesta)
-                else:
-                    print("📭 No hay mensaje entrante.")
+                    else:
+                        print("📭 No hay mensaje entrante.")
                 
             else:
                 print("📎 Evento recibido, pero no es mensaje de texto:", mensaje.get("type"))
