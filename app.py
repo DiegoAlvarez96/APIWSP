@@ -20,7 +20,7 @@ usuarios = {}  # {telefono: timestamp}
 prompt_base = (
     "Analizá el siguiente texto y verificá si contiene toda esta información obligatoria:\n"
     "luego te limitaras a responder en base a esto y no estas autorizado a responder otra cosa.\n"
-    "el objetivo no es "analizar" si no cargar una solicitud para eso se solcitia el formato\n"
+    "el objetivo no es analizar si no cargar una solicitud para eso se solcitia el formato\n"
     "- Número de comitente\n"
     "- Nombre del fondo, deberas buscar en la siguiente listado y encontrar el mas parecido de lo que te pasen\n" 
     f"{tabla_codigos}\n"
