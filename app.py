@@ -20,13 +20,13 @@ usuarios = {}  # {telefono: timestamp}
 prompt_base = (
     "Analizá el siguiente texto y verificá si contiene toda esta información obligatoria:\n"
     "- Número de comitente\n"
-    "- Nombre del fondo común de inversión\n"
-    "- Tipo de operación (SUSCRIPCIÓN o RESCATE)\n"
-    "- Monto o cantidad (según el tipo de operación)\n\n"
+    "- Nombre del fondo"
+    "- Tipo de operación SUSCRIPCION o RESCATE, puede estar abreviado\n"
+    "- Importe o cantidad (según el tipo de operación)\n\n"
     "Si falta alguno de estos datos, respondé indicando cuál o cuáles faltan y pedí esa información específicamente.\n"
     "los datos que envio en el ultimo mensaje recuerdalos porque probablemnte se envien solo los faltantes y deberas añadirlos.\n"
     "Si todos los datos están presentes, respondé con el siguiente formato exacto:\n\n"
-    "OPERACIÓN: (SUSCRIPCIÓN o RESCATE); COMITENTE: (número); NOMBRE FCI: (nombre); IMPORTE o CANTIDAD: (número)\n\n"
+    "OPERACIÓN: (SUSCRIPCIÓN o RESCATE)\n COMITENTE: (número)\n NOMBRE FCI: (nombre)\n IMPORTE o CANTIDAD: (número)\n\n"
 )
 
 
