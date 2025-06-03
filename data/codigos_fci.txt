@@ -1,0 +1,125 @@
+Fondo CAFCI	Abreviatura + Clase	Código CAFCI
+Adcap Acciones - Clase A	AAA FCI A	1255
+Adcap Acciones - Clase B	AAA FCI B	1256
+Dracma Balanceado - Clase A	BAL FCI A	2497
+Adcap Balanceado I - Clase A	RP FCI A	1167
+Adcap Balanceado I - Clase B	RP FCI B	1168
+Adcap Balanceado VI - Clase A	BAL6 FCI A	1392
+Adcap Balanceado VI - Clase B	BAL6 FCI B	1393
+Adcap Balanceado VI - Clase C	BAL6 FCI C	1961
+Adcap Cobertura - Clase A	BAL2 FCI A	3367
+Adcap Cobertura - Clase B	BAL2 FCI B	3368
+Adcap Cobertura - Clase C	BAL2 FCI C	3369
+Adcap Moneda - Clase A	RT FCI A	1235
+Adcap Moneda - Clase B	RT FCI B	1236
+Adcap Moneda - Clase C	RT FCI C	3326
+Adcap Pesos Plus - Clase A	PP FCI A	1194
+Adcap Pesos Plus - Clase B	PP FCI B	1195
+Adcap Pesos Plus - Clase C	PP FCI C	1574
+Adcap Balanceado VIII - Clase A	BAL8 FCI A	3907
+Adcap Balanceado VIII - Clase B	BAL8 FCI B	3908
+Adcap Balanceado X - Clase A	BAL10 FCI A	3951
+Adcap Balanceado X - Clase B	BAL10 FCI B	3952
+Adcap Balanceado X - Clase C	BAL10 FCI C	3953
+Adcap Balanceado XVI - Clase A	BAL16 FCI A	4306
+Adcap Balanceado XVI - Clase B	BAL16 FCI B	4307
+Adcap Balanceado XVI - Clase C	BAL16 FCI C	4308
+Adcap Balanceado XVII - Clase A	BAL17 FCI A	4309
+Adcap Balanceado XVII - Clase B	BAL17 FCI B	4310
+Adcap Balanceado XVII - Clase C	#N/D	4311
+Adcap Renta Fija - Clase A	RF FCI A	1070
+Adcap Renta Fija - Clase B	RF FCI B	1071
+Adcap Renta Fija - Clase C	RF FCI C	3343
+Adcap Wise Capital Multistrategy - Clase A	MUL FCI A	3910
+Adcap Wise Capital Multistrategy - Clase B	MUL FCI B	3911
+Adcap Balanceado IV - Clase A	BAL4 FCI A	3700
+Adcap Balanceado IV - Clase B	BAL4 FCI B	3701
+Adcap Balanceado IV - Clase C	BAL4 FCI C	3702
+Adcap Balanceado V - Clase A	BAL5 FCI A	3765
+Adcap Balanceado V - Clase B	BAL5 FCI B	3766
+Adcap Balanceado V - Clase C	BAL5 FCI C	3767
+Adcap Balanceado XI - Clase A	WISE FCI A	3481
+Adcap Balanceado XI - Clase B	WISE FCI B	3482
+Adcap Balanceado XI - Clase C	WISE FCI C	3483
+Adcap Wise Capital Growth - Clase A	AWCG FCI A	3697
+Adcap Wise Capital Growth - Clase B	AWCG FCI B	3698
+Adcap Wise Capital Growth - Clase C	AWCG FCI C	3699
+Adcap Renta Dolar - Clase D	GL FCI D	1645
+Adcap Renta Dolar - Clase E	GL FCI E	1646
+Adcap Renta Dolar - Clase F	GL FCI F	1647
+Adcap Balanceado III - Clase A	#N/D	4070
+Adcap Balanceado III - Clase B	#N/D	4071
+Adcap Balanceado XII - Clase A	BAL12 FCI A	4041
+Adcap Balanceado XII - Clase B	BAL12 FCI B	4042
+Adcap Balanceado XII - Clase C	BAL12 FCI C	4043
+Adcap Wise Capital Hedge - Clase A	AWCH FCI A	4062
+Adcap Wise Capital Hedge - Clase B	AWCH FCI B	4063
+Adcap Wise Capital Hedge - Clase C	AWCH FCI C	4064
+Adcap Abierto Pymes - Clase A	PY FCI A	1112
+Adcap Abierto Pymes - Clase B	PY FCI B	1113
+Adcap Abierto Pymes - Clase C	PY FCI C	3407
+Adcap S&C Renta Corporativa Corto Plazo Abierto Pymes - Clase A	SYC FCI A	3727
+Adcap S&C Renta Corporativa Corto Plazo Abierto Pymes - Clase B	SYC FCI B	3728
+Adcap S&C Renta Corporativa Corto Plazo Abierto Pymes - Clase C	SYC FCI C	3729
+Adcap Desarrollo e Infraestructura - Clase A	INFRA FCI A	4044
+Adcap Desarrollo e Infraestructura - Clase B	INFRA FCI B	4045
+Adcap Desarrollo e Infraestructura - Clase C	INFRA FCI C	4046
+Adcap Desarrollo e Infraestructura - Clase G	INFRA FCI G	4047
+Adcap Verde y Sustentable ASG - Clase A	ASG FCI A	4212
+Adcap Verde y Sustentable ASG - Clase B	ASG FCI B	4213
+Adcap Verde y Sustentable ASG - Clase C	ASG FCI C	4214
+Adcap Ahorro Dinámico Fondo de Dinero - Clase A	DINA FCI A	4021
+Adcap Ahorro Dinámico Fondo de Dinero - Clase B	DINA FCI B	4022
+Adcap Ahorro Dinámico Fondo de Dinero - Clase C	DINA FCI C	4023
+Adcap Ahorro Pesos Fondo de Dinero - Clase A	AP FCI A	2565
+Adcap Ahorro Pesos Fondo de Dinero - Clase B	AP FCI B	2566
+Adcap Ahorro Pesos Fondo de Dinero - Clase C	AP FCI C	2573
+Adcap Ahorro Pesos Fondo de Dinero - Clase I	AP FCI I	3532
+Adcap Balanceado VII - Clase A	BAL7 FCI A	99999991
+Adcap Balanceado VII - Clase B	BAL7 FCI B	4521
+Adcap Balanceado VII - Clase C	BAL7 FCI C	99999993
+Adcap Balance Multiactivo - Clase A	MUA FCI A	4535
+Adcap Balance Multiactivo - Clase B	MUA FCI B	4536
+Adcap Balance Multiactivo - Clase C	MUA FCI C	4537
+Adcap Balanceado XX - Clase A	BAL20 FCI A	4552
+Adcap Balanceado XX - Clase B	BAL20 FCI B	4553
+Adcap Balanceado XX - Clase C	BAL20 FCI C	4567
+Adcap Balanceado IX - Clase A	BAL9 FCI A	4644
+Adcap Balanceado IX - Calse B	BAL9 FCI B	4645
+Adcap Balanceado IX - Calse C	BAL9 FCI C	4646
+Adcap Ahorro Dolares - Clase C	AD FCI C	1530
+Adcap Ahorro Dolares - Clase D	AD FCI D	1531
+Adcap Ahorro Dolares - Clase E	AD FCI E	1532
+Adcap Ahorro Dolares - Clase F	AD FCI F	1533
+Adcap Renta Fija - Clase Ley N 27.743	RF FCI CERA	4672
+Adcap Pymes - Clase Ley N 27.743	PY FCI CERA	4673
+Adcap Moneda - Clase Ley N 27.743	RT FCI CERA	4674
+Adcap Acciones - Clase Ley N 27.743	AAA FCI CERA	4675
+Adcap Pesos Plus - Clase Ley N 27.743	PP FCI CERA	4676
+Adcap Renta Dolar - Clase Ley N 27.743	GL FCI CERA	4677
+Adcap Ahorro Pesos - Clase Ley N 27.743	AP FCI CERA	4678
+Adcap Cobertura - Clase Ley N 27.743	BAL2 FCI CERA	4679
+Adcap Dinamico - Clase Ley N 27.743	DINA FCI CERA	4680
+Adcap Balanceado XVI - Clase Ley N 27.743	BAL16 FCI CERA	4682
+Adcap Balanceado IX - Clase Ley N 27.743	BAL9 FCI CERA	4688
+Adcap Multiactivo - Clase Ley N 27.743	MUA FCI CERA	4689
+Adcap Balanceado XII - Clase Ley N 27.743	BAL12 FCI CERA	4691
+Adcap Balanceado VI - Clase Ley N 27.743	BAL6 FCI CERA	4693
+Adcap Balanceado XX - Clase Ley N 27.743	BAL20 FCI CERA	4694
+Adcap Balanceado X - Clase Ley N 27.743	BAL10 FCI CERA	4695
+Adcap Capital Growth - Clase Ley N 27.743	AWCG FCI CERA	4696
+Adcap Multistrategy - Clase Ley N 27.743	MUL FCI CERA	4697
+Adcap Capital Hedge - Clase Ley N 27.743	BAL15 FCI CERA	4698
+Adcap Ahorro Dolares - Clase Ley N 27.743	AD FCI CERA	4793
+Adcap Balanceado XIII - Clase A	BAL13 FCI A	4948
+Adcap Balanceado XIII - Clase B	BAL13 FCI B	4949
+Adcap Balanceado XIII - Clase C	BAL13 FCI C	4950
+IOL Dolar Ahorro Plus - Clase D	IOLDP FCI D	5100
+IOL Dolar Ahorro Plus - Clase E	IOLDP FCI E	5101
+IOL Dolar Ahorro Plus - Clase F	IOLDP FCI F	5102
+IOL Dolar Ahorro Plus - Clase Ley N 27.743	IOLDP FCI CERA	5103
+Alycbur FCI Abierto Pymes - Clase A	ALYP FCI A	3478
+Alycbur FCI Abierto Pymes - Clase C	ALYP FCI C	3480
+Alycbur FCI Abierto Pymes - Clase B	ALYP FCI B	3479
+Adcap Balanceado XV - Clase A	AFM FCI A	5301
+Adcap Balanceado XV - Clase B	AFM FCI B	5302
