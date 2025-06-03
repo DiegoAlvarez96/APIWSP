@@ -29,12 +29,26 @@ def webhook():
     
         try:
             valor = data['entry'][0]['changes'][0]['value']
-    
-            # Chequeamos si hay un mensaje entrante
+            telefono = mensaje['from']
+            if telefono = "5492664745297"
+            enviar_respuesta_whatsapp(telefono, "numero aprobado")
+            Else
+            enviar_respuesta_whatsapp(telefono, "no cuenta con permisos por favor no escriba")
+            exit()
+            
             if "messages" in valor:
                 mensaje = valor['messages'][0]
                 texto = mensaje['text']['body']
                 telefono = mensaje['from']
+    
+                # Si es el primer mensaje (tipo "text") sin contexto
+                if mensaje.get("type") == "text" and not mensaje.get("context"):
+                    mensaje_bienvenida = (
+                        "¡Hola! Soy tu asistente virtual 🤖\n"
+                        "Solo respondo en base a información validada por la empresa.\n"
+                        "Podés preguntarme sobre políticas, contacto, horarios, etc. 😊"
+                    )
+                    enviar_respuesta_whatsapp(telefono, mensaje_bienvenida)
     
                 # Usamos RAG
                 #respuesta = responder_con_rag(texto)
@@ -44,7 +58,7 @@ def webhook():
                 # Enviamos respuesta por WhatsApp
                 enviar_respuesta_whatsapp(telefono, respuesta)
             else:
-                print("📭 No hay mensaje entrante en esta actualización.")
+                print("📭 No hay mensaje entrante.")
         except Exception as e:
             print("❌ Error en webhook:", e)
     
