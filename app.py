@@ -5,6 +5,7 @@ import os
 from procesador_rag import construir_indice
 import sys
 from datetime import datetime, timedelta
+import json
 
 
 app = Flask(__name__)
@@ -16,12 +17,33 @@ WHATSAPP_TOKEN = os.getenv("WHATSAPP_TOKEN")
 WHATSAPP_PHONE_ID = "600271346513044"
 #OPENAI_API_KEY = ""
 NUMEROS_PERMITIDOS = {"5492664745297", "5491122334455"}
-usuarios = {}  # {telefono: timestamp}
+
+USUARIOS_PATH = "usuarios.json"
 
 def obtener_tabla_codigos():
     with open("data/codigos_fci.txt", encoding="utf-8") as f:
         return f.read()
+ #memoria de chat iniciados       
+def cargar_usuarios():
+    if os.path.exists(USUARIOS_PATH):
+        with open(USUARIOS_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return {k: datetime.fromisoformat(v) for k, v in data.items()}
+    return {}
 
+def guardar_usuarios():
+    with open(USUARIOS_PATH, "w", encoding="utf-8") as f:
+        json.dump({k: v.isoformat() for k, v in usuarios.items()}, f)
+
+def limpiar_usuarios():
+    ahora = datetime.now()
+    expirados = [tel for tel, ts in usuarios.items() if ahora - ts > timedelta(hours=8)]
+    for tel in expirados:
+        del usuarios[tel]
+    guardar_usuarios()
+
+
+usuarios = cargar_usuarios()
 
 tabla_codigos = obtener_tabla_codigos()
 prompt_base = (
@@ -145,12 +167,13 @@ def responder_con_rag(pregunta_usuario):
     )
     return respuesta.choices[0].message.content
 
-#memoria de chat iniciados
-def limpiar_usuarios():
-    ahora = datetime.now()
-    expirados = [tel for tel, ts in usuarios.items() if ahora - ts > timedelta(hours=8)]
-    for tel in expirados:
-        del usuarios[tel]
+
+@app.route('/usuarios', methods=['GET'])
+def ver_usuarios():
+    return jsonify({
+        "usuarios": {k: v.isoformat() for k, v in usuarios.items()}
+    })
+
 
 
 
