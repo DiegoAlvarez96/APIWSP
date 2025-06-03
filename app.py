@@ -81,6 +81,7 @@ def webhook():
             valor = data['entry'][0]['changes'][0]['value']
 
             if "messages" in valor:
+                mensaje = valor['messages'][0]
                 if mensaje.get("type") == "text":
                     texto = mensaje['text']['body']
                     telefono = mensaje['from']
