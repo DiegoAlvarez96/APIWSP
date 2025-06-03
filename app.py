@@ -41,11 +41,11 @@ def webhook():
                 telefono = mensaje['from']
 
             
-            if telefono in NUMEROS_PERMITIDOS:
-                enviar_respuesta_whatsapp(telefono, "✅ Bienvenido")
-            else:
-                enviar_respuesta_whatsapp(telefono, "❌ No tiene permisos.")
-                sys.exit(1)
+                if telefono in NUMEROS_PERMITIDOS:
+                    enviar_respuesta_whatsapp(telefono, "✅ Bienvenido")
+                else:
+                    enviar_respuesta_whatsapp(telefono, "❌ No tiene permisos.")
+                    sys.exit(1)
 
                 
                 # Si es el primer mensaje (tipo "text") sin contexto
