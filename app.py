@@ -26,23 +26,28 @@ def webhook():
 
     if request.method == 'POST':
         data = request.get_json()
-
+    
         try:
-            mensaje = data['entry'][0]['changes'][0]['value']['messages'][0]
-            texto = mensaje['text']['body']
-            telefono = mensaje['from']
-
-            # Mandar a ChatGPT
-            respuesta = consultar_chatgpt(texto)
-            #responder_con_rag(texto)
-
-            # Responder por WhatsApp
-            enviar_respuesta_whatsapp(telefono, respuesta)
-
+            valor = data['entry'][0]['changes'][0]['value']
+    
+            # Chequeamos si hay un mensaje entrante
+            if "messages" in valor:
+                mensaje = valor['messages'][0]
+                texto = mensaje['text']['body']
+                telefono = mensaje['from']
+    
+                # Usamos RAG
+                respuesta = responder_con_rag(texto)
+    
+                # Enviamos respuesta por WhatsApp
+                enviar_respuesta_whatsapp(telefono, respuesta)
+            else:
+                print("📭 No hay mensaje entrante en esta actualización.")
         except Exception as e:
             print("❌ Error en webhook:", e)
-
+    
         return "ok", 200
+
 
 from openai import OpenAI
 
