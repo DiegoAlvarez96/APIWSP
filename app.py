@@ -58,7 +58,7 @@ prompt_base = (
     "Si falta alguno de estos datos, respondé indicando cuál o cuáles faltan y pedí esa información específicamente.\n"
     "los datos que envio en el ultimo mensaje recuerdalos porque probablemnte se envien solo los faltantes y deberas añadirlos.\n"
     "Si todos los datos están presentes, respondé con el siguiente formato exacto:\n\n"
-    "OPERACIÓN: (SUSCRIPCIÓN o RESCATE)\n COMITENTE: (número)\n NOMBRE FCI: (nombre)\n IMPORTE o CANTIDAD: (número)\n\n"
+    "OPERACIÓN: (SUSCRIPCIÓN o RESCATE)\n COMITENTE: (número)\n NOMBRE FCI: (nombre)\n IMPORTE o CANTIDAD: (número), si  el tipo de operacion fue SUSCRIPCION siempre va ser importe, en cambio si es rescate puede ser importe o cantidad, esa informacion debe estar clara\n\n"
 )
 
 
