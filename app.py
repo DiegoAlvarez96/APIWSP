@@ -98,6 +98,7 @@ def webhook():
                         #enviar_respuesta_whatsapp(telefono, "✅ Bienvenido")
                     else:
                         enviar_respuesta_whatsapp(telefono, "❌ No tiene permisos.")
+                        guardar_usuarios()
                         sys.exit(1)
                     
     
@@ -113,14 +114,14 @@ def webhook():
                         usuarios[telefono] = datetime.now()
                         guardar_usuarios()
                         return "ok", 200
-                    # Usamos RAG
-                    #respuesta = responder_con_rag(texto)
-                    
-                    #directo a apichat gpt
-                    #estructrua = "en el siguiente texto deberia contener almenos un numero de comitente, un nombre de fondo comun de inversion, una operacion SUSCRIPCION/RESCATE, y un monto o cantidad, en caos de faltar esa informacion por favor respondeme con el dato faltante, en caos de que la informacion este toda respondeme con esa informacion resumida asi: OPERACION: (suscripcion/rescate); COMITENTE:(numero); NOMBRE FCI:(nombre); IMPORTE o CANTIDAD: (NUMERO). EL TEXTO A CONTINUACION: "
-                    respuesta = consultar_chatgpt(prompt_base + texto)
-                    # Enviamos respuesta por WhatsApp
-                    enviar_respuesta_whatsapp(telefono, respuesta)
+                        # Usamos RAG
+                        #respuesta = responder_con_rag(texto)
+                        
+                        #directo a apichat gpt
+                        #estructrua = "en el siguiente texto deberia contener almenos un numero de comitente, un nombre de fondo comun de inversion, una operacion SUSCRIPCION/RESCATE, y un monto o cantidad, en caos de faltar esa informacion por favor respondeme con el dato faltante, en caos de que la informacion este toda respondeme con esa informacion resumida asi: OPERACION: (suscripcion/rescate); COMITENTE:(numero); NOMBRE FCI:(nombre); IMPORTE o CANTIDAD: (NUMERO). EL TEXTO A CONTINUACION: "
+                        respuesta = consultar_chatgpt(prompt_base + texto)
+                        # Enviamos respuesta por WhatsApp
+                        enviar_respuesta_whatsapp(telefono, respuesta)
                     else:
                         print("📭 No hay mensaje entrante.")
                 
