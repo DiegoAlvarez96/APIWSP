@@ -33,18 +33,21 @@ def webhook():
     
         try:
             valor = data['entry'][0]['changes'][0]['value']
-            telefono = mensaje['from']
-            if telefono in NUMEROS_PERMITIDOS:
-                enviar_respuesta_whatsapp(telefono, "✅ Bienvenido")
-            else:
-                enviar_respuesta_whatsapp(telefono, "❌ No tiene permisos.")
-                sys.exit(1)
+
             
             if "messages" in valor:
                 mensaje = valor['messages'][0]
                 texto = mensaje['text']['body']
                 telefono = mensaje['from']
-    
+
+            
+            if telefono in NUMEROS_PERMITIDOS:
+                enviar_respuesta_whatsapp(telefono, "✅ Bienvenido")
+            else:
+                enviar_respuesta_whatsapp(telefono, "❌ No tiene permisos.")
+                sys.exit(1)
+
+                
                 # Si es el primer mensaje (tipo "text") sin contexto
                 if mensaje.get("type") == "text" and not mensaje.get("context"):
                     mensaje_bienvenida = (
