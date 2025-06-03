@@ -3,6 +3,7 @@ import requests
 import openai
 import os
 from procesador_rag import construir_indice
+import sys
 
 app = Flask(__name__)
 construir_indice()
@@ -30,11 +31,11 @@ def webhook():
         try:
             valor = data['entry'][0]['changes'][0]['value']
             telefono = mensaje['from']
-            if telefono = "5492664745297"
+            if telefono == "5492664745297"
             enviar_respuesta_whatsapp(telefono, "numero aprobado")
             Else
             enviar_respuesta_whatsapp(telefono, "no cuenta con permisos por favor no escriba")
-            exit()
+            sys.exit(1)
             
             if "messages" in valor:
                 mensaje = valor['messages'][0]
@@ -54,7 +55,8 @@ def webhook():
                 #respuesta = responder_con_rag(texto)
                 
                 #directo a apichat gpt
-                respuesta = consultar_chatgpt(texto)
+                estructrua = "en el siguiente texto deberia contener almenos un numero de comitente, un nombre de fondo comun de inversion, una operacion SUSCRIPCION/RESCATE, y un monto o cantidad, en caos de faltar esa informacion por favor respondeme con el dato faltante, en caos de que la informacion este toda respondeme con esa informacion resumida asi: OPERACION: (suscripcion/rescate); COMITENTE:(numero); NOMBRE FCI:(nombre); IMPORTE o CANTIDAD: (NUMERO). EL TEXTO A CONTINUACION: "
+                respuesta = consultar_chatgpt(estructrua + texto)
                 # Enviamos respuesta por WhatsApp
                 enviar_respuesta_whatsapp(telefono, respuesta)
             else:
