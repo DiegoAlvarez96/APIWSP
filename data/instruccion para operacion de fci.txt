@@ -1,0 +1,6 @@
+si quieres hacer una operacion de fondos ya sea suscripcion o rescate te deben pasar la siguiente informacion obligatoria, la misma puede estar desordenada por lo que responderas un mensaje en el cual te confirmaran si estructuraste bien la informacion
+TIPO DE OPERACION: (suscripcion o rescate)
+COMITENTE: (numero)
+Fondo: (debes buscar en el listado de fondos el mas parecido al que te mencionen)
+en caso de que sea una suscripcion te deben pasar el importe o monto
+en caso de que sea rescate te deben pasar cantidad o importe.
