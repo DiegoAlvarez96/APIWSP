@@ -1,9 +1,9 @@
 import os
 import fitz  # PyMuPDF
 import pandas as pd
-import chromadb
-from chromadb.utils import embedding_functions
-from chromadb import PersistentClient
+#import chromadb
+#from chromadb.utils import embedding_functions
+#from chromadb import PersistentClient
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -63,19 +63,14 @@ def fragmentar(texto, tamaño=800):
 
 # Indexar los textos en ChromaDB
 def construir_indice():
-    docs = cargar_documentos()
-    todos_los_chunks = []
-    for texto in docs:
-        chunks = fragmentar(texto)
-        todos_los_chunks.extend(chunks)
-
-    for i, chunk in enumerate(todos_los_chunks):
-        collection.add(documents=[chunk], ids=[f"frag_{i}"])
-    print(f"📚 Se indexaron {len(todos_los_chunks)} fragmentos.")
+    documentos = cargar_documentos()
+    global CONTEXTO_MEMORIA
+    CONTEXTO_MEMORIA = "\n---\n".join(fragmentar("\n".join(documentos)))
+    print(f"📚 Contexto cargado en memoria. Fragmentos: {len(CONTEXTO_MEMORIA.split('---'))}")
     
 # Buscar el fragmento más relevante
+
+
 def buscar_contexto(pregunta):
-    print("🔍 Buscando contexto...", pregunta)
-    resultados = collection.query(query_texts=[pregunta], n_results=3)
-    print("✅ Contexto obtenido:", resultados)
-    return "\n---\n".join(doc[0] for doc in resultados['documents'])
+    print("🔍 Buscando memoria...", pregunta)
+    return CONTEXTO_MEMORIA
