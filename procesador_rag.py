@@ -3,13 +3,13 @@ import fitz  # PyMuPDF
 import pandas as pd
 import chromadb
 from chromadb.utils import embedding_functions
+from chromadb import PersistentClient
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 # Crear cliente Chroma y colección
 #chroma_client = chromadb.Client()
-chroma_client = chromadb.Client(path="./chroma_db")  # Persistente en disco
-
+chroma_client = PersistentClient(path="/data/chroma_db")
 collection = chroma_client.get_or_create_collection("base_conocimiento")
 
 
