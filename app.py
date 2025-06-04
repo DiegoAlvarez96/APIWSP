@@ -87,7 +87,7 @@ def webhook():
                 if mensaje.get("type") == "text":
                     texto = mensaje['text']['body']
                     telefono = mensaje['from']
-
+                    print(f"📨 Mensaje de {telefono}: {texto}")
                     limpiar_usuarios()
 
                     if telefono in NUMEROS_PERMITIDOS:
@@ -116,8 +116,13 @@ def webhook():
 
                 else:
                     print("📎 Evento recibido, pero no es mensaje de texto:", mensaje.get("type"))
+                    print(f"📨 Mensaje de tipo {tipo} de {telefono}: {mensaje}")
+            elif "statuses" in valor:
+                estados = valor['statuses']
+                for estado in estados:
+                    print("📡 Estado recibido:", estado)
             else:
-                print("📭 POST recibido sin 'messages'. Posiblemente un evento de estado.")
+                print("📎 Evento recibido sin mensajes ni estados.")
 
         except Exception as e:
             print("❌ Error en webhook:", e)
