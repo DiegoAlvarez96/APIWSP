@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import json
 from openai import OpenAI
 from threading import Thread
+from flask import jsonify
 
 app = Flask(__name__)
 construir_indice()
@@ -194,6 +195,22 @@ def ver_usuarios():
         "usuarios": {k: v.isoformat() for k, v in usuarios.items()}
     })
 
+@app.route("/leer_archivo/<nombre>")
+def leer_archivo(nombre):
+    ruta = os.path.join("data", nombre)
+    if os.path.exists(ruta):
+        with open(ruta, encoding="utf-8") as f:
+            return f.read()
+    return "Archivo no encontrado", 404
+
+
+@app.route('/data/listar', methods=['GET'])
+def listar_archivos_data():
+    try:
+        archivos = os.listdir("data")
+        return jsonify({"archivos": archivos})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 
