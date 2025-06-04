@@ -109,7 +109,9 @@ def webhook():
 
                     # Si ya es usuario conocido, responder
                     # Usamos RAG
+                    print("⏳ Entrando a responder_con_rag...")
                     respuesta = responder_con_rag(texto)
+                    print("✅ Respuesta obtenida")
                     #directo con prompt
                     #respuesta = consultar_chatgpt(prompt_base + texto)
                     enviar_respuesta_whatsapp(telefono, respuesta)
