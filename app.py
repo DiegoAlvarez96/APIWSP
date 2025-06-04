@@ -118,7 +118,9 @@ def procesar_mensaje(data):
                     metadata = responder_con_rag(texto)
                     #print("✅ Respuesta obtenida")
                     #directo con prompt
-                    respuesta = consultar_chatgpt("responder este mensaje: --" + texto +  "-- solo basate en la informacion a continuacion no busques en internet + metadata)
+                    respuesta = consultar_chatgpt(
+                        f"Responder este mensaje: --{texto}-- solo basate en la información a continuación, no busques en internet: {metadata}"
+                    )
                     enviar_respuesta_whatsapp(telefono, respuesta)
 
             else:
