@@ -1,0 +1,10 @@
+el horario tope para carga de transferencias es las 17hs 
+los echeq que se endonen a ADCAP SECURITIES, debe ser primer endoso, (o sea el comitente debe ser el beneficiario principal del echeq)
+las conversiones de monedas (7000) a mep o cable se recepcionan hasta las 14hs, la conversion a mep demora 48hs habiles, la conversion a cable es en el dia. 
+en caso de querer transferir monedas a otras a otra ALYC debera cargar la instruccion de transferencia de pesos con la cuenta bancaria de la alyc destino, asi mismo precia validacion de titularidad via mail.
+el maild e tesoreria es: tesoreria@ad-cap.com.ar
+el mail de operaciones es: operaciones@ad-cap-com.ar
+el mail de titulos es: titulos@ad-cap.com.ar
+en caso de que no veas migrada una suscripcion "SIMPLE" desde visual fondos a visual bolsas y la misma es a comitente informar en los grupos pertinentes, en caso de que sea a cuenta se conciliaria al dia siguiente antes de las 12hs en caso de ver diferencias luego de ese tiempo informar urgente.
+un comitente no puede quedar con saldo negativo.
+el horario de corte de los fonos es el siguiente: ahorro pesos 18hs; ahorro dolar; 17hs; acciones 17hs; resto de fondos 16hs.
