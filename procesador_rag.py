@@ -8,7 +8,9 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 # Crear cliente Chroma y colección
 chroma_client = chromadb.Client()
+print("🔍 Buscando contexto...")
 collection = chroma_client.get_or_create_collection("base_conocimiento")
+print("✅ Contexto obtenido:", resultados)
 
 # Función para extraer texto de PDF
 def leer_pdf(path):
@@ -43,7 +45,7 @@ def cargar_documentos():
     return documentos
 
 # Fragmentar texto en chunks
-def fragmentar(texto, tamaño=400):
+def fragmentar(texto, tamaño=800):
     partes = texto.split("\n")
     chunks = []
     actual = ""
