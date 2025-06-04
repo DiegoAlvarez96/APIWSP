@@ -7,7 +7,8 @@ from chromadb.utils import embedding_functions
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 # Crear cliente Chroma y colección
-chroma_client = chromadb.Client()
+#chroma_client = chromadb.Client()
+chroma_client = chromadb.Client(path="./chroma_db")  # Persistente en disco
 
 collection = chroma_client.get_or_create_collection("base_conocimiento")
 
