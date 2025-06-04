@@ -6,6 +6,7 @@ from procesador_rag import construir_indice
 import sys
 from datetime import datetime, timedelta
 import json
+from openai import OpenAI
 
 
 app = Flask(__name__)
@@ -17,6 +18,7 @@ WHATSAPP_TOKEN = os.getenv("WHATSAPP_TOKEN")
 WHATSAPP_PHONE_ID = "600271346513044"
 #OPENAI_API_KEY = ""
 NUMEROS_PERMITIDOS = {"5492664745297", "5491122334455"}
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 USUARIOS_PATH = "usuarios.json"
 
@@ -77,65 +79,68 @@ def webhook():
 
     if request.method == 'POST':
         data = request.get_json()
+        Thread(target=procesar_mensaje, args=(data,)).start()
         return "ok", 200
-        try:
-            valor = data['entry'][0]['changes'][0]['value']
 
-            if "messages" in valor:
-                mensaje = valor['messages'][0]
+def procesar_mensaje(data):      
+    try:
+        valor = data['entry'][0]['changes'][0]['value']
 
-                if mensaje.get("type") == "text":
-                    texto = mensaje['text']['body']
-                    telefono = mensaje['from']
-                    print(f"📨 Mensaje de {telefono}: {texto}")
-                    limpiar_usuarios()
+        if "messages" in valor:
+            mensaje = valor['messages'][0]
 
-                    if telefono in NUMEROS_PERMITIDOS:
-                        pass  # permitido
-                    else:
-                        enviar_respuesta_whatsapp(telefono, "❌ No tiene permisos.")
-                        return "ok", 200
+            if mensaje.get("type") == "text":
+                texto = mensaje['text']['body']
+                telefono = mensaje['from']
+                print(f"📨 Mensaje de {telefono}: {texto}")
+                limpiar_usuarios()
 
-                    if telefono not in usuarios:
-                        mensaje_bienvenida = (
-                            "¡Hola! Soy tu asistente virtual 🤖\n"
-                            "Solo respondo en base a información validada por la empresa.\n"
-                            "Actualmente solo tabulo información de operaciones de FCI. 😊"
-                        )
-                        enviar_respuesta_whatsapp(telefono, mensaje_bienvenida)
-                        usuarios[telefono] = datetime.now()
-                        guardar_usuarios()
-                        return "ok", 200
-                    else:
-                        # Si ya es usuario conocido, responder
-                        # Usamos RAG
-                        print("⏳ Entrando a responder_con_rag...")
-                        respuesta = responder_con_rag(texto)
-                        print("✅ Respuesta obtenida")
-                        #directo con prompt
-                        #respuesta = consultar_chatgpt(prompt_base + texto)
-                        enviar_respuesta_whatsapp(telefono, respuesta)
-
+                if telefono in NUMEROS_PERMITIDOS:
+                    pass  # permitido
                 else:
-                    print("📎 Evento recibido, pero no es mensaje de texto:", mensaje.get("type"))
-                    print(f"📨 Mensaje de tipo {tipo} de {telefono}: {mensaje}")
-            elif "statuses" in valor:
-                estados = valor['statuses']
-                for estado in estados:
-                    print("📡 Estado recibido:", estado)
+                    enviar_respuesta_whatsapp(telefono, "❌ No tiene permisos.")
+                    return "ok", 200
+
+                if telefono not in usuarios:
+                    mensaje_bienvenida = (
+                        "¡Hola! Soy tu asistente virtual 🤖\n"
+                        "Solo respondo en base a información validada por la empresa.\n"
+                        "Actualmente solo tabulo información de operaciones de FCI. 😊"
+                    )
+                    enviar_respuesta_whatsapp(telefono, mensaje_bienvenida)
+                    usuarios[telefono] = datetime.now()
+                    guardar_usuarios()
+                    return "ok", 200
+                else:
+                    # Si ya es usuario conocido, responder
+                    # Usamos RAG
+                    print("⏳ Entrando a responder_con_rag...")
+                    respuesta = responder_con_rag(texto)
+                    print("✅ Respuesta obtenida")
+                    #directo con prompt
+                    #respuesta = consultar_chatgpt(prompt_base + texto)
+                    enviar_respuesta_whatsapp(telefono, respuesta)
+
             else:
-                print("📎 Evento recibido sin mensajes ni estados.")
+                print("📎 Evento recibido, pero no es mensaje de texto:", mensaje.get("type"))
+                print(f"📨 Mensaje de tipo {tipo} de {telefono}: {mensaje}")
+        elif "statuses" in valor:
+            estados = valor['statuses']
+            for estado in estados:
+                print("📡 Estado recibido:", estado)
+        else:
+            print("📎 Evento recibido sin mensajes ni estados.")
 
-        except Exception as e:
-            print("❌ Error en webhook:", e)
+    except Exception as e:
+        print("❌ Error en webhook:", e)
 
-        return "ok", 200
+    #return "ok", 200
 
 
 
-from openai import OpenAI
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+
 
 def consultar_chatgpt(texto_usuario):
     completion = client.chat.completions.create(
