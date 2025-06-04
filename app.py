@@ -105,7 +105,7 @@ def procesar_mensaje(data):
                     mensaje_bienvenida = (
                         "¡Hola! Soy tu asistente virtual 🤖\n"
                         "Solo respondo en base a información validada por la empresa.\n"
-                        "Actualmente solo tabulo información de operaciones de FCI. 😊"
+                        "😊"
                     )
                     enviar_respuesta_whatsapp(telefono, mensaje_bienvenida)
                     usuarios[telefono] = datetime.now()
