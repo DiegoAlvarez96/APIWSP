@@ -165,7 +165,9 @@ from procesador_rag import buscar_contexto
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def responder_con_rag(pregunta_usuario):
+    print("🧠 Entrando a buscar_contexto...")
     contexto = buscar_contexto(pregunta_usuario)
+    print("✅ Contexto obtenido. Enviando a OpenAI...")
 
     respuesta = client.chat.completions.create(
         model="gpt-4o-mini",
