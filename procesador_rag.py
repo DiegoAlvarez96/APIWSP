@@ -75,7 +75,7 @@ def construir_indice():
     
 # Buscar el fragmento más relevante
 def buscar_contexto(pregunta):
-    print("🔍 Buscando contexto...")
+    print("🔍 Buscando contexto...", pregunta)
     resultados = collection.query(query_texts=[pregunta], n_results=3)
     print("✅ Contexto obtenido:", resultados)
     return "\n---\n".join(doc[0] for doc in resultados['documents'])
