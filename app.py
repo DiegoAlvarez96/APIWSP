@@ -106,15 +106,15 @@ def webhook():
                         usuarios[telefono] = datetime.now()
                         guardar_usuarios()
                         return "ok", 200
-
-                    # Si ya es usuario conocido, responder
-                    # Usamos RAG
-                    print("⏳ Entrando a responder_con_rag...")
-                    respuesta = responder_con_rag(texto)
-                    print("✅ Respuesta obtenida")
-                    #directo con prompt
-                    #respuesta = consultar_chatgpt(prompt_base + texto)
-                    enviar_respuesta_whatsapp(telefono, respuesta)
+                    else:
+                        # Si ya es usuario conocido, responder
+                        # Usamos RAG
+                        print("⏳ Entrando a responder_con_rag...")
+                        respuesta = responder_con_rag(texto)
+                        print("✅ Respuesta obtenida")
+                        #directo con prompt
+                        #respuesta = consultar_chatgpt(prompt_base + texto)
+                        enviar_respuesta_whatsapp(telefono, respuesta)
 
                 else:
                     print("📎 Evento recibido, pero no es mensaje de texto:", mensaje.get("type"))
