@@ -5,6 +5,5 @@
 el maild e tesoreria es: tesoreria@ad-cap.com.ar
 el mail de operaciones es: operaciones@ad-cap-com.ar
 el mail de titulos es: titulos@ad-cap.com.ar
-en caso de que no veas migrada una suscripcion "SIMPLE" desde visual fondos a visual bolsas y la misma es a comitente informar en los grupos pertinentes, en caso de que sea a cuenta se conciliaria al dia siguiente antes de las 12hs en caso de ver diferencias luego de ese tiempo informar urgente.
-un comitente no puede quedar con saldo negativo.
-el horario de corte de los fonos es el siguiente: ahorro pesos 18hs; ahorro dolar; 17hs; acciones 17hs; resto de fondos 16hs.
+*en caso de que no veas migrada una suscripcion "SIMPLE" desde visual fondos a visual bolsas y la misma es a comitente informar en los grupos pertinentes, en caso de que sea a cuenta se conciliaria al dia siguiente antes de las 12hs en caso de ver diferencias luego de ese tiempo informar urgente.
+*un comitente no puede quedar con saldo negativo.
