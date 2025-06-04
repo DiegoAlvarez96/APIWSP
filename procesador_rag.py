@@ -41,6 +41,7 @@ def cargar_documentos():
             documentos.append(leer_txt(path))
         elif archivo.endswith(".xlsx") or archivo.endswith(".xls"):
             documentos.append(leer_excel(path))
+    print ("se cargaron los docs")
     
     return documentos
 
@@ -69,7 +70,8 @@ def construir_indice():
 
     for i, chunk in enumerate(todos_los_chunks):
         collection.add(documents=[chunk], ids=[f"frag_{i}"])
-
+    print(f"📚 Se indexaron {len(todos_los_chunks)} fragmentos.")
+    
 # Buscar el fragmento más relevante
 def buscar_contexto(pregunta):
     print("🔍 Buscando contexto...")
