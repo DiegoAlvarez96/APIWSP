@@ -7,7 +7,7 @@ import sys
 from datetime import datetime, timedelta
 import json
 from openai import OpenAI
-
+from threading import Thread
 
 app = Flask(__name__)
 construir_indice()
