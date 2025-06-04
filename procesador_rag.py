@@ -5,12 +5,12 @@ import pandas as pd
 #from chromadb.utils import embedding_functions
 #from chromadb import PersistentClient
 
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
+#os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 # Crear cliente Chroma y colección
 #chroma_client = chromadb.Client()
-chroma_client = PersistentClient(path="/data/chroma_db")
-collection = chroma_client.get_or_create_collection("base_conocimiento")
+#chroma_client = PersistentClient(path="/data/chroma_db")
+#collection = chroma_client.get_or_create_collection("base_conocimiento")
 
 
 # Función para extraer texto de PDF
