@@ -47,18 +47,18 @@ usuarios = cargar_usuarios()
 
 tabla_codigos = obtener_tabla_codigos()
 prompt_base = (
-    "Analizá el siguiente texto y verificá si contiene toda esta información obligatoria:\n"
+    "Analizá el siguiente mensaje y verificá si contiene toda esta información obligatoria:\n"
     "luego te limitaras a responder en base a esto y no estas autorizado a responder otra cosa.\n"
     "el objetivo no es analizar si no cargar una solicitud para eso se solcitia el formato\n"
     "- Número de comitente\n"
     "- Nombre del fondo, deberas buscar en la siguiente listado y encontrar el mas parecido de lo que te pasen\n" 
     f"{tabla_codigos}\n"
-    "- Tipo de operación SUSCRIPCION o RESCATE, puede estar abreviado\n"
+    "- Tipo de operación SUSCRIPCION o RESCATE, puede estar abreviado o en minuscula en cualquier parte del mensaje, si encuentras esta palabra en el mensaje eso indica la operacion\n"
     "- Importe o cantidad (según el tipo de operación)\n\n"
     "Si falta alguno de estos datos, respondé indicando cuál o cuáles faltan y pedí esa información específicamente.\n"
     "los datos que envio en el ultimo mensaje recuerdalos porque probablemnte se envien solo los faltantes y deberas añadirlos.\n"
     "Si todos los datos están presentes, respondé con el siguiente formato exacto:\n\n"
-    "OPERACIÓN: (SUSCRIPCIÓN o RESCATE)\n COMITENTE: (número)\n NOMBRE FCI: (nombre)\n IMPORTE o CANTIDAD: (número), si  el tipo de operacion fue SUSCRIPCION siempre va ser importe, en cambio si es rescate puede ser importe o cantidad, esa informacion debe estar clara\n\n"
+    "OPERACIÓN: (SUSCRIPCIÓN o RESCATE)\n COMITENTE: (número)\n NOMBRE FCI: (nombre)\n IMPORTE o CANTIDAD: (número), si  el tipo de operacion fue SUSCRIPCION siempre va ser importe, en cambio si es rescate puede ser importe o cantidad\n\n"
 )
 
 
@@ -109,9 +109,9 @@ def webhook():
 
                     # Si ya es usuario conocido, responder
                     # Usamos RAG
-                    #respuesta = responder_con_rag(texto)
+                    respuesta = responder_con_rag(texto)
                     #directo con prompt
-                    respuesta = consultar_chatgpt(prompt_base + texto)
+                    #respuesta = consultar_chatgpt(prompt_base + texto)
                     enviar_respuesta_whatsapp(telefono, respuesta)
 
                 else:
