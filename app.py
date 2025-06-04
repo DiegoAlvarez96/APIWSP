@@ -77,7 +77,7 @@ def webhook():
 
     if request.method == 'POST':
         data = request.get_json()
-
+        return "ok", 200
         try:
             valor = data['entry'][0]['changes'][0]['value']
 
