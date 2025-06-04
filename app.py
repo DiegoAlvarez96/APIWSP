@@ -119,7 +119,7 @@ def procesar_mensaje(data):
                     #print("✅ Respuesta obtenida")
                     #directo con prompt
                     respuesta = consultar_chatgpt(
-                        f"Responder este mensaje: --{texto}-- solo basate en la información a continuación, no busques en internet: {metadata}"
+                        f"Responder este mensaje: --{texto}-- solo basate en la información a continuación, no busques en internet: {metadata} el total de tu respuesta debe tener menos de 4000 caracteres"
                     )
                     enviar_respuesta_whatsapp(telefono, respuesta)
 
