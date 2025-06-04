@@ -8,9 +8,9 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 # Crear cliente Chroma y colección
 chroma_client = chromadb.Client()
-print("🔍 Buscando contexto...")
+
 collection = chroma_client.get_or_create_collection("base_conocimiento")
-print("✅ Contexto obtenido:", resultados)
+
 
 # Función para extraer texto de PDF
 def leer_pdf(path):
@@ -72,5 +72,7 @@ def construir_indice():
 
 # Buscar el fragmento más relevante
 def buscar_contexto(pregunta):
+    print("🔍 Buscando contexto...")
     resultados = collection.query(query_texts=[pregunta], n_results=3)
+    print("✅ Contexto obtenido:", resultados)
     return "\n---\n".join(doc[0] for doc in resultados['documents'])
