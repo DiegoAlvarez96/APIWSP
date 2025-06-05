@@ -118,9 +118,10 @@ def procesar_mensaje(data):
                     enviar_bienvenida_con_botones(telefono)
                     estado_usuario[telefono] = None
 
-            elif mensaje.get("type") == "button":
-                payload = mensaje["button"]["payload"]
-
+            elif mensaje.get("type") == "interactive" and mensaje["interactive"]["type"] == "button_reply":
+                payload = mensaje["interactive"]["button_reply"]["id"]
+                print(f"🔘 Botón presionado: {payload}")
+            
                 if payload == "confirmar_solicitud":
                     texto_original = historial_solicitudes.get(telefono, "")
                     if texto_original:
@@ -128,17 +129,21 @@ def procesar_mensaje(data):
                         enviar_respuesta_con_menu(telefono, f"📦 JSON generado:\n```{json.dumps(json_generado, indent=2)}```")
                     else:
                         enviar_respuesta_con_menu(telefono, "⚠️ No se encontró la solicitud anterior.")
+            
                 elif payload == "menu_inicial":
                     enviar_bienvenida_con_botones(telefono)
+            
                 elif payload == "exit":
                     usuarios.pop(telefono, None)
                     estado_usuario.pop(telefono, None)
                     historial_solicitudes.pop(telefono, None)
                     enviar_respuesta_whatsapp(telefono, "🚪 Sesión finalizada. Hasta luego.")
+            
                 elif payload in ["general", "suscripcion", "rescate"]:
                     estado_usuario[telefono] = payload.upper()
                     mensaje = "Perfecto. Por favor envíame los datos como texto plano."
                     enviar_respuesta_con_menu(telefono, mensaje)
+
 
         elif "statuses" in valor:
             for estado in valor['statuses']:
@@ -258,9 +263,9 @@ def enviar_bienvenida_con_botones(numero):
             "body": {"text": "¡Hola! Soy tu asistente virtual 🤖\nSeleccioná una opción para continuar:"},
             "action": {
                 "buttons": [
-                    {"type": "reply", "reply": {"id": "general", "title": "Consultas teso"}},
-                    {"type": "reply", "reply": {"id": "suscripcion", "title": "Carga SUSCRIPCION"}},
-                    {"type": "reply", "reply": {"id": "rescate", "title": "Carga RESCATE"}}
+                    {"type": "reply", "reply": {"id": "general", "title": "Consultas info general tesoreria"}},
+                    {"type": "reply", "reply": {"id": "suscripcion", "title": "Carga de SUSCRIPCION FCI"}},
+                    {"type": "reply", "reply": {"id": "rescate", "title": "Carga de RESCATE FCI"}}
                 ]
             }
         }
@@ -306,6 +311,15 @@ def leer_archivo(nombre):
         with open(ruta, encoding="utf-8") as f:
             return f.read()
     return "Archivo no encontrado", 404
+
+@app.route("/ver_logs")
+def ver_logs():
+    try:
+        with open("debug.log", "r", encoding="utf-8") as f:
+            return "<pre>" + f.read() + "</pre>"
+    except FileNotFoundError:
+        return "⚠️ No hay logs todavía", 404
+
 
 if __name__ == '__main__':
     app.run(debug=True)
