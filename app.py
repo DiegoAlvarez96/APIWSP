@@ -24,6 +24,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 USUARIOS_PATH = "usuarios.json"
 historial_solicitudes = {}  # clave: telefono, valor: mensaje original que contenia "la solicitud esta correcta"
 estado_usuario = {}  # clave: telefono, valor: tipo de flujo ("GENERAL", "SUSCRIPCION", "RESCATE")
+estado_usuario2 = {}  # clave: telefono, valor: tipo de flujo ("SUSC", "RESC")
 
 # === UTILIDADES ===
 def obtener_tabla_codigos():
@@ -50,6 +51,7 @@ def limpiar_usuarios():
     for tel in expirados:
         usuarios.pop(tel, None)
         estado_usuario.pop(tel, None)
+        estado_usuario2.pop(tel, None)
         historial_solicitudes.pop(tel, None)
     guardar_usuarios()
 
@@ -95,31 +97,37 @@ def procesar_mensaje(data):
                     guardar_usuarios()
                     print("mensaje bienvenida exito y guardado usario")
                     return
-
+                
                 flujo = estado_usuario.get(telefono)
+                flujo2= estado_usuario2.get(telefono)
                 if flujo == "GENERAL":
                     print("se ingresa a general")
                     metadata = responder_con_rag(texto)
                     respuesta = consultar_chatgpt(f"Responder esta consulta: --{texto}-- usando solo esta información:\n{metadata}")
                     enviar_respuesta_con_menu(telefono, respuesta)
-                elif flujo in ["SUSCRIPCION", "RESCATE"]:
-                    print("se ingresa a suscr y resc")
+                elif flujo == FCI:
+                elif flujo2 == "SUSC":
+                    print("se ingresa a susc")
                     prompt = (
                         f"Interpretá y tabulá este mensaje:\n{texto}\n"
                         f"Tené en cuenta esta lista de fondos disponibles:\n{tabla_codigos}\n"
-                        f"Solo devolvé:\nOPERACIÓN: (SUSCRIPCIÓN o RESCATE)\nCOMITENTE: (número)\nNOMBRE FCI: (nombre)\nIMPORTE o CANTIDAD: (número)\n"
+                        f"Solo devolvé:\nOPERACIÓN: (SUSCRIPCIÓN)\nCOMITENTE: (número)\nNOMBRE FCI: (nombre)\nIMPORTE o CANTIDAD: (número)\n"
                         f"si la info es tabulable y esta completa incluir al final del mensaje (Confirmar si la solicitud está correcta)")
                     respuesta = consultar_chatgpt(prompt)
                     print(respuesta)
-
+                elif flujo == "RESC":
+                    print("se ingresa a resc")
+                    prompt = (
+                        f"Interpretá y tabulá este mensaje:\n{texto}\n"
+                        f"Tené en cuenta esta lista de fondos disponibles:\n{tabla_codigos}\n"
+                        f"Solo devolvé:\nOPERACIÓN: (RESCATE)\nCOMITENTE: (número)\nNOMBRE FCI: (nombre)\nIMPORTE o CANTIDAD: (número)\n"
+                        f"si la info es tabulable y esta completa incluir al final del mensaje (Confirmar si la solicitud está correcta)")
+                    respuesta = consultar_chatgpt(prompt)
+                    print(respuesta)
                     
-                    if "confirmar si la solicitud está correcta" in  respuesta.lower():
-                        print("se encontro la solicitud esta correcta")
-                        historial_solicitudes[telefono] = respuesta
-                        enviar_confirmacion_whatsapp(telefono, respuesta)
-                    else:
-                        print("no se encontro similitud")
-                        enviar_respuesta_con_menu(telefono, respuesta)
+                elif flujo == ANULAR:
+                    print("se ingresa a ANULAR")
+                    enviar_respuesta_con_menu(telefono, "Por favor pasame el id a anular")
                 else:
                     enviar_bienvenida_con_botones(telefono)
                     estado_usuario[telefono] = None
@@ -146,8 +154,12 @@ def procesar_mensaje(data):
                     historial_solicitudes.pop(telefono, None)
                     enviar_respuesta_whatsapp(telefono, "🚪 Sesión finalizada. Hasta luego.")
             
-                elif payload in ["general", "suscripcion", "rescate"]:
+                elif payload in ["general", "FCI", "ANULAR"]:
                     estado_usuario[telefono] = payload.upper()
+                    mensaje = "Perfecto. Por favor envíame la informacion."
+                    enviar_respuesta_con_menu(telefono, mensaje)
+                elif payload in ["SUSC", "RESC"]:
+                    estado_usuario2[telefono] = payload.upper()
                     mensaje = "Perfecto. Por favor envíame la informacion."
                     enviar_respuesta_con_menu(telefono, mensaje)
 
@@ -180,7 +192,7 @@ def generar_json_para_api(texto_confirmado):
         '{"isTotal": false, "isAmount": false, "shares": 100, "bank_account_id": ""}\n\n'
         "Si es RESCATE y se especificó importe:\n"
         '{"isTotal": false, "isAmount": true, "amount": 100, "bank_account_id": ""}\n\n'
-        "Devolveme solo el JSON. Nada más."
+        "Devolveme solo el JSON. Nada más NI UN PUNTO NI LETRA DE MAS."
     )
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -273,8 +285,39 @@ def enviar_bienvenida_con_botones(numero):
             "action": {
                 "buttons": [
                     {"type": "reply", "reply": {"id": "general", "title": "Consultas teso"}},
-                    {"type": "reply", "reply": {"id": "suscripcion", "title": "Carga SUSCRIPCION"}},
-                    {"type": "reply", "reply": {"id": "rescate", "title": "Carga RESCATE"}}
+                    {"type": "reply", "reply": {"id": "FCI", "title": "OPERAR FCI"}},
+                    {"type": "reply", "reply": {"id": "ANULAR", "title": "ANULAR SOLICITUD"}}
+                ]
+            }
+        }
+    }
+    print("se armo el payload")
+    response = requests.post(url, headers=headers, json=payload)
+    print("mensaje de bienvenida enviado. Status:")
+    print(response.status_code)
+    print("Respuesta:", response.text)
+    logging.debug(f"mensaje de bienvenida enviado. Status: {response.status_code}")
+    logging.debug(f"Respuesta: {response.text}")
+
+
+def enviar_SUSC_RESC_botones(numero):
+    print("ENVIO BOTONES SUSSC O RESC")
+    url = f"https://graph.facebook.com/v19.0/{WHATSAPP_PHONE_ID}/messages"
+    headers = {
+        "Authorization": f"Bearer {WHATSAPP_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": numero,
+        "type": "interactive",
+        "interactive": {
+            "type": "button",
+            "body": {"text": "Seleccioná una opción para continuar:"},
+            "action": {
+                "buttons": [
+                    {"type": "reply", "reply": {"id": "SUSC", "title": "SUSCRIPCION"}},
+                    {"type": "reply", "reply": {"id": "RESC", "title": "RESCATE"}},
                 ]
             }
         }
