@@ -109,7 +109,7 @@ def procesar_mensaje(data):
                         f"Solo devolvé:\nOPERACIÓN: (SUSCRIPCIÓN o RESCATE)\nCOMITENTE: (número)\nNOMBRE FCI: (nombre)\nIMPORTE o CANTIDAD: (número)\n"
                         f"si la info es tabulable y esta completa incluir al final del mensaje (Confirmar si la solicitud esta correcta)")
                     respuesta = consultar_chatgpt(prompt)
-
+                    pirnt(respuesta)
                     if es_similar(respuesta.lower(), "confirmar la solicitud esta correcta"):
                         print("se encontro la solicitud esta correcta")
                         historial_solicitudes[telefono] = respuesta
