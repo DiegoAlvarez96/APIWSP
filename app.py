@@ -303,5 +303,14 @@ def leer_archivo(nombre):
             return f.read()
     return "Archivo no encontrado", 404
 
+@app.route("/ver_logs")
+def ver_logs():
+    try:
+        with open("debug.log", "r", encoding="utf-8") as f:
+            return "<pre>" + f.read() + "</pre>"
+    except FileNotFoundError:
+        return "⚠️ No hay logs todavía", 404
+
+
 if __name__ == '__main__':
     app.run(debug=True)
