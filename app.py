@@ -2,31 +2,34 @@ from flask import Flask, request, jsonify
 import requests
 import openai
 import os
-from procesador_rag import construir_indice
+from procesador_rag import construir_indice, buscar_contexto
 import sys
 from datetime import datetime, timedelta
 import json
 from openai import OpenAI
 from threading import Thread
-from flask import jsonify
+import pandas as pd
 
 app = Flask(__name__)
 construir_indice()
 
-# Configuraciones
-#WHATSAPP_TOKEN = ""
 WHATSAPP_TOKEN = os.getenv("WHATSAPP_TOKEN")
 WHATSAPP_PHONE_ID = "600271346513044"
-#OPENAI_API_KEY = ""
 NUMEROS_PERMITIDOS = {"5492664745297", "5491122334455", "5493517362123"}
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 USUARIOS_PATH = "usuarios.json"
+historial_solicitudes = {}  # clave: telefono, valor: mensaje original que contenia "la solicitud esta correcta"
+estado_usuario = {}  # clave: telefono, valor: tipo de flujo ("GENERAL", "SUSCRIPCION", "RESCATE")
 
+# === UTILIDADES ===
 def obtener_tabla_codigos():
-    with open("data/codigos_fci.txt", encoding="utf-8") as f:
-        return f.read()
- #memoria de chat iniciados       
+    path = "data/info fondos (fci).xlsx"
+    if os.path.exists(path):
+        df = pd.read_excel(path)
+        return "\n".join(df.iloc[:, 0].astype(str).tolist())
+    return ""
+
 def cargar_usuarios():
     if os.path.exists(USUARIOS_PATH):
         with open(USUARIOS_PATH, "r", encoding="utf-8") as f:
@@ -42,35 +45,16 @@ def limpiar_usuarios():
     ahora = datetime.now()
     expirados = [tel for tel, ts in usuarios.items() if ahora - ts > timedelta(hours=8)]
     for tel in expirados:
-        del usuarios[tel]
+        usuarios.pop(tel, None)
+        estado_usuario.pop(tel, None)
+        historial_solicitudes.pop(tel, None)
     guardar_usuarios()
 
-
 usuarios = cargar_usuarios()
-
 tabla_codigos = obtener_tabla_codigos()
-prompt_base = (
-    "Analizá el siguiente mensaje y verificá si contiene toda esta información obligatoria:\n"
-    "luego te limitaras a responder en base a esto y no estas autorizado a responder otra cosa.\n"
-    "el objetivo no es analizar si no cargar una solicitud para eso se solcitia el formato\n"
-    "- Número de comitente\n"
-    "- Nombre del fondo, deberas buscar en la siguiente listado y encontrar el mas parecido de lo que te pasen\n" 
-    f"{tabla_codigos}\n"
-    "- Tipo de operación SUSCRIPCION o RESCATE, puede estar abreviado o en minuscula en cualquier parte del mensaje, si encuentras esta palabra en el mensaje eso indica la operacion\n"
-    "- Importe o cantidad (según el tipo de operación)\n\n"
-    "Si falta alguno de estos datos, respondé indicando cuál o cuáles faltan y pedí esa información específicamente.\n"
-    "los datos que envio en el ultimo mensaje recuerdalos porque probablemnte se envien solo los faltantes y deberas añadirlos.\n"
-    "Si todos los datos están presentes, respondé con el siguiente formato exacto:\n\n"
-    "OPERACIÓN: (SUSCRIPCIÓN o RESCATE)\n COMITENTE: (número)\n NOMBRE FCI: (nombre)\n IMPORTE o CANTIDAD: (número), si  el tipo de operacion fue SUSCRIPCION siempre va ser importe, en cambio si es rescate puede ser importe o cantidad\n\n"
-)
 
-
-
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
+# === WEBHOOK ===
 @app.route('/webhook', methods=['GET', 'POST'])
-
-
 def webhook():
     if request.method == 'GET':
         verify_token = "mi_token_de_verificacion"
@@ -83,71 +67,83 @@ def webhook():
         Thread(target=procesar_mensaje, args=(data,)).start()
         return "ok", 200
 
-def procesar_mensaje(data):      
+# === PROCESAR MENSAJE ===
+def procesar_mensaje(data):
     try:
         valor = data['entry'][0]['changes'][0]['value']
 
         if "messages" in valor:
             mensaje = valor['messages'][0]
+            telefono = mensaje['from']
 
             if mensaje.get("type") == "text":
                 texto = mensaje['text']['body']
-                telefono = mensaje['from']
                 print(f"📨 Mensaje de {telefono}: {texto}")
                 limpiar_usuarios()
 
-                if telefono in NUMEROS_PERMITIDOS:
-                    pass  # permitido
-                else:
+                if telefono not in NUMEROS_PERMITIDOS:
                     enviar_respuesta_whatsapp(telefono, "❌ No tiene permisos.")
-                    return "ok", 200
+                    return
 
                 if telefono not in usuarios:
-                    mensaje_bienvenida = (
-                        "¡Hola! Soy tu asistente virtual 🤖\n"
-                        "Solo respondo en base a información validada por la empresa.\n"
-                        "😊"
-                    )
-                    enviar_respuesta_whatsapp(telefono, mensaje_bienvenida)
+                    enviar_bienvenida_con_botones(telefono)
                     usuarios[telefono] = datetime.now()
                     guardar_usuarios()
-                    return "ok", 200
-                else:
-                    # Si ya es usuario conocido, responder
-                    # Usamos RAG
-                    print("⏳ Entrando a responder_con_rag...")
-                    metadata = responder_con_rag(texto)
-                    #print("✅ Respuesta obtenida")
-                    #directo con prompt
-                    respuesta = consultar_chatgpt(
-                        f"Responder este mensaje: --{texto}-- solo basate en la información a continuación, no busques en internet: {metadata} el total de tu respuesta debe tener menos de 4000 caracteres"
-                    )
-                    enviar_respuesta_whatsapp(telefono, respuesta)
+                    return
 
-            else:
-                print("📎 Evento recibido, pero no es mensaje de texto:", mensaje.get("type"))
-                print(f"📨 Mensaje de tipo {tipo} de {telefono}: {mensaje}")
+                flujo = estado_usuario.get(telefono)
+                if flujo == "GENERAL":
+                    metadata = responder_con_rag(texto)
+                    respuesta = consultar_chatgpt(f"Responder esta consulta: --{texto}-- usando solo esta información:\n{metadata}")
+                    enviar_respuesta_con_menu(telefono, respuesta)
+                elif flujo in ["SUSCRIPCION", "RESCATE"]:
+                    prompt = (
+                        f"Interpretá y tabulá este mensaje:\n{texto}\n"
+                        f"Tené en cuenta esta lista de fondos disponibles:\n{tabla_codigos}\n"
+                        f"Solo devolvé:\nOPERACIÓN: (SUSCRIPCIÓN o RESCATE)\nCOMITENTE: (número)\nNOMBRE FCI: (nombre)\nIMPORTE o CANTIDAD: (número)")
+                    respuesta = consultar_chatgpt(prompt)
+
+                    if "la solicitud esta correcta" in respuesta.lower():
+                        historial_solicitudes[telefono] = respuesta
+                        enviar_confirmacion_whatsapp(telefono, respuesta)
+                    else:
+                        enviar_respuesta_con_menu(telefono, respuesta)
+                else:
+                    enviar_bienvenida_con_botones(telefono)
+
+            elif mensaje.get("type") == "button":
+                payload = mensaje["button"]["payload"]
+
+                if payload == "confirmar_solicitud":
+                    texto_original = historial_solicitudes.get(telefono, "")
+                    if texto_original:
+                        json_generado = generar_json_para_api(texto_original)
+                        enviar_respuesta_con_menu(telefono, f"📦 JSON generado:\n```{json.dumps(json_generado, indent=2)}```")
+                    else:
+                        enviar_respuesta_con_menu(telefono, "⚠️ No se encontró la solicitud anterior.")
+                elif payload == "menu_inicial":
+                    enviar_bienvenida_con_botones(telefono)
+                elif payload == "exit":
+                    usuarios.pop(telefono, None)
+                    estado_usuario.pop(telefono, None)
+                    historial_solicitudes.pop(telefono, None)
+                    enviar_respuesta_whatsapp(telefono, "🚪 Sesión finalizada. Hasta luego.")
+                elif payload in ["general", "suscripcion", "rescate"]:
+                    estado_usuario[telefono] = payload.upper()
+                    mensaje = "Perfecto. Por favor envíame los datos como texto plano."
+                    enviar_respuesta_con_menu(telefono, mensaje)
+
         elif "statuses" in valor:
-            estados = valor['statuses']
-            for estado in estados:
-                print("📡 Estado recibido:", estado)
-        else:
-            print("📎 Evento recibido sin mensajes ni estados.")
+            for estado in valor['statuses']:
+                print("🛁 Estado recibido:", estado)
 
     except Exception as e:
         print("❌ Error en webhook:", e)
 
-    #return "ok", 200
-
-
-
-
-
-
-
+# === OPENAI ===
 def consultar_chatgpt(texto_usuario):
     completion = client.chat.completions.create(
-        model="gpt-4o-mini",  # O gpt-3.5-turbo o el que quieras
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "Sos un asistente eficiente y directo."},
             {"role": "user", "content": texto_usuario}
@@ -155,6 +151,28 @@ def consultar_chatgpt(texto_usuario):
     )
     return completion.choices[0].message.content
 
+def generar_json_para_api(texto_confirmado):
+    prompt = (
+        f"A partir de esta solicitud:\n{texto_confirmado}\n\n"
+        "Armame el JSON para enviar a la API. Si es SUSCRIPCIÓN:\n"
+        'POST /broker/assetManager/mutual_funds/ABREVIATURA/requests/subscription\n'
+        'Body:\n{"amount": 100, "bank_account_id": ""}\n\n'
+        "Si es RESCATE y se especificó cantidad:\n"
+        '{"isTotal": false, "isAmount": false, "shares": 100, "bank_account_id": ""}\n\n'
+        "Si es RESCATE y se especificó importe:\n"
+        '{"isTotal": false, "isAmount": true, "amount": 100, "bank_account_id": ""}\n\n'
+        "Devolveme solo el JSON. Nada más."
+    )
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    try:
+        return json.loads(completion.choices[0].message.content)
+    except Exception:
+        return {"error": "El mensaje no era JSON válido"}
+
+# === WHATSAPP ===
 def enviar_respuesta_whatsapp(numero, mensaje):
     url = f"https://graph.facebook.com/v19.0/{WHATSAPP_PHONE_ID}/messages"
     headers = {
@@ -170,15 +188,80 @@ def enviar_respuesta_whatsapp(numero, mensaje):
     r = requests.post(url, headers=headers, json=payload)
     print("Respuesta WhatsApp:", r.status_code, r.text)
 
-from procesador_rag import buscar_contexto
+def enviar_respuesta_con_menu(numero, mensaje):
+    url = f"https://graph.facebook.com/v19.0/{WHATSAPP_PHONE_ID}/messages"
+    headers = {
+        "Authorization": f"Bearer {WHATSAPP_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": numero,
+        "type": "interactive",
+        "interactive": {
+            "type": "button",
+            "body": {"text": mensaje},
+            "action": {
+                "buttons": [
+                    {"type": "reply", "reply": {"id": "menu_inicial", "title": "🔙 Menu inicial"}},
+                    {"type": "reply", "reply": {"id": "exit", "title": "🚪 Exit"}}
+                ]
+            }
+        }
+    }
+    requests.post(url, headers=headers, json=payload)
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+def enviar_confirmacion_whatsapp(numero, mensaje_original):
+    url = f"https://graph.facebook.com/v19.0/{WHATSAPP_PHONE_ID}/messages"
+    headers = {
+        "Authorization": f"Bearer {WHATSAPP_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": numero,
+        "type": "interactive",
+        "interactive": {
+            "type": "button",
+            "body": {"text": mensaje_original + "\n\n❓ Deseás confirmar esta solicitud?"},
+            "action": {
+                "buttons": [
+                    {"type": "reply", "reply": {"id": "confirmar_solicitud", "title": "✅ Confirmar"}},
+                    {"type": "reply", "reply": {"id": "menu_inicial", "title": "🔙 Menu inicial"}},
+                    {"type": "reply", "reply": {"id": "exit", "title": "🚪 Exit"}}
+                ]
+            }
+        }
+    }
+    requests.post(url, headers=headers, json=payload)
 
+def enviar_bienvenida_con_botones(numero):
+    url = f"https://graph.facebook.com/v19.0/{WHATSAPP_PHONE_ID}/messages"
+    headers = {
+        "Authorization": f"Bearer {WHATSAPP_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": numero,
+        "type": "interactive",
+        "interactive": {
+            "type": "button",
+            "body": {"text": "¡Hola! Soy tu asistente virtual 🤖\nSeleccioná una opción para continuar:"},
+            "action": {
+                "buttons": [
+                    {"type": "reply", "reply": {"id": "general", "title": "Consultas info general tesoreria"}},
+                    {"type": "reply", "reply": {"id": "suscripcion", "title": "Carga de SUSCRIPCION FCI"}},
+                    {"type": "reply", "reply": {"id": "rescate", "title": "Carga de RESCATE FCI"}}
+                ]
+            }
+        }
+    }
+    requests.post(url, headers=headers, json=payload)
+
+# === RAG ===
 def responder_con_rag(pregunta_usuario):
-    print("🧠 Entrando a buscar_contexto...")
     contexto = buscar_contexto(pregunta_usuario)
-    print("✅ Contexto obtenido. Enviando a OpenAI...")
-
     respuesta = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -188,21 +271,10 @@ def responder_con_rag(pregunta_usuario):
     )
     return respuesta.choices[0].message.content
 
-
+# === UTILIDADES EXTRAS ===
 @app.route('/usuarios', methods=['GET'])
 def ver_usuarios():
-    return jsonify({
-        "usuarios": {k: v.isoformat() for k, v in usuarios.items()}
-    })
-
-@app.route("/leer_archivo/<nombre>")
-def leer_archivo(nombre):
-    ruta = os.path.join("data", nombre)
-    if os.path.exists(ruta):
-        with open(ruta, encoding="utf-8") as f:
-            return f.read()
-    return "Archivo no encontrado", 404
-
+    return jsonify({"usuarios": {k: v.isoformat() for k, v in usuarios.items()}})
 
 @app.route('/data/listar', methods=['GET'])
 def listar_archivos_data():
@@ -212,7 +284,13 @@ def listar_archivos_data():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+@app.route("/leer_archivo/<nombre>")
+def leer_archivo(nombre):
+    ruta = os.path.join("data", nombre)
+    if os.path.exists(ruta):
+        with open(ruta, encoding="utf-8") as f:
+            return f.read()
+    return "Archivo no encontrado", 404
 
 if __name__ == '__main__':
     app.run(debug=True)
