@@ -86,6 +86,7 @@ def procesar_mensaje(data):
                     return
 
                 if telefono not in usuarios:
+                    print("se envia mensaje de bienvenida")
                     enviar_bienvenida_con_botones(telefono)
                     usuarios[telefono] = datetime.now()
                     guardar_usuarios()
@@ -93,10 +94,12 @@ def procesar_mensaje(data):
 
                 flujo = estado_usuario.get(telefono)
                 if flujo == "GENERAL":
+                    print("se ingresa a general")
                     metadata = responder_con_rag(texto)
                     respuesta = consultar_chatgpt(f"Responder esta consulta: --{texto}-- usando solo esta información:\n{metadata}")
                     enviar_respuesta_con_menu(telefono, respuesta)
                 elif flujo in ["SUSCRIPCION", "RESCATE"]:
+                    print("se ingresa a suscr y resc")
                     prompt = (
                         f"Interpretá y tabulá este mensaje:\n{texto}\n"
                         f"Tené en cuenta esta lista de fondos disponibles:\n{tabla_codigos}\n"
@@ -110,6 +113,7 @@ def procesar_mensaje(data):
                         enviar_respuesta_con_menu(telefono, respuesta)
                 else:
                     enviar_bienvenida_con_botones(telefono)
+                    estado_usuario[telefono] = None
 
             elif mensaje.get("type") == "button":
                 payload = mensaje["button"]["payload"]
@@ -223,7 +227,7 @@ def enviar_confirmacion_whatsapp(numero, mensaje_original):
         "type": "interactive",
         "interactive": {
             "type": "button",
-            "body": {"text": mensaje_original + "\n\n❓ Deseás confirmar esta solicitud?"},
+            "body": {"text": mensaje_original + "\n\n Deseás confirmar esta solicitud"},
             "action": {
                 "buttons": [
                     {"type": "reply", "reply": {"id": "confirmar_solicitud", "title": "✅ Confirmar"}},
