@@ -186,7 +186,7 @@ def generar_json_para_api(texto_confirmado):
         model="gpt-4o-mini",
         messages=[{"role": "user", "content": prompt}]
     )
-    logging.debug(f"json segun chat: {completion.text}")
+    logging.debug(f"json segun chat: {completion.choices[0].message.content}")
     print(completion.choices[0].message.content)  
     try:
         return json.loads(completion.choices[0].message.content)
