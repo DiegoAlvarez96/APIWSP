@@ -9,7 +9,9 @@ import json
 from openai import OpenAI
 from threading import Thread
 import pandas as pd
+import logging
 
+logging.basicConfig(filename="debug.log", level=logging.DEBUG)
 app = Flask(__name__)
 construir_indice()
 
@@ -86,14 +88,13 @@ def procesar_mensaje(data):
                     return
 
                 if telefono not in usuarios:
-                    print("se envia mensaje de bienvenida")
+                    print("se comienza mensaje de bienvenida")
                     enviar_bienvenida_con_botones(telefono)
-                    print("se salio del envio el msj de bienv")
                     usuarios[telefono] = datetime.now()
                     guardar_usuarios()
+                    print("mensaje bienvenida exito y guardado usario")
                     return
 
-                print("me fijo el flujo del usuario")
                 flujo = estado_usuario.get(telefono)
                 if flujo == "GENERAL":
                     print("se ingresa a general")
@@ -242,6 +243,7 @@ def enviar_confirmacion_whatsapp(numero, mensaje_original):
     requests.post(url, headers=headers, json=payload)
 
 def enviar_bienvenida_con_botones(numero):
+    print("mensaje de bienvenida iniciado")
     url = f"https://graph.facebook.com/v19.0/{WHATSAPP_PHONE_ID}/messages"
     headers = {
         "Authorization": f"Bearer {WHATSAPP_TOKEN}",
@@ -256,18 +258,20 @@ def enviar_bienvenida_con_botones(numero):
             "body": {"text": "¡Hola! Soy tu asistente virtual 🤖\nSeleccioná una opción para continuar:"},
             "action": {
                 "buttons": [
-                    {"type": "reply", "reply": {"id": "general", "title": "Consultas info general tesoreria"}},
-                    {"type": "reply", "reply": {"id": "suscripcion", "title": "Carga de SUSCRIPCION FCI"}},
-                    {"type": "reply", "reply": {"id": "rescate", "title": "Carga de RESCATE FCI"}}
+                    {"type": "reply", "reply": {"id": "general", "title": "Consultas teso"}},
+                    {"type": "reply", "reply": {"id": "suscripcion", "title": "Carga SUSCRIPCION"}},
+                    {"type": "reply", "reply": {"id": "rescate", "title": "Carga RESCATE"}}
                 ]
             }
         }
     }
+    print("se armo el payload")
     response = requests.post(url, headers=headers, json=payload)
     print("mensaje de bienvenida enviado. Status:")
     print(response.status_code)
     print("Respuesta:", response.text)
-
+    logging.debug(f"mensaje de bienvenida enviado. Status: {response.status_code}")
+    logging.debug(f"Respuesta: {response.text}")
     
 
 # === RAG ===
@@ -302,15 +306,6 @@ def leer_archivo(nombre):
         with open(ruta, encoding="utf-8") as f:
             return f.read()
     return "Archivo no encontrado", 404
-
-@app.route("/ver_logs")
-def ver_logs():
-    try:
-        with open("debug.log", "r", encoding="utf-8") as f:
-            return "<pre>" + f.read() + "</pre>"
-    except FileNotFoundError:
-        return "⚠️ No hay logs todavía", 404
-
 
 if __name__ == '__main__':
     app.run(debug=True)
