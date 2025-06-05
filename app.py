@@ -106,8 +106,8 @@ def procesar_mensaje(data):
                     prompt = (
                         f"Interpretá y tabulá este mensaje:\n{texto}\n"
                         f"Tené en cuenta esta lista de fondos disponibles:\n{tabla_codigos}\n"
-                        f"Solo devolvé:\nOPERACIÓN: (SUSCRIPCIÓN o RESCATE)\nCOMITENTE: (número)\nNOMBRE FCI: (nombre)\nIMPORTE o CANTIDAD: (número)"\N
-                        f"si la info es tabulable y esta completa incluir al final del mensaje "Confirmar si la solicitud esta correcta")
+                        f"Solo devolvé:\nOPERACIÓN: (SUSCRIPCIÓN o RESCATE)\nCOMITENTE: (número)\nNOMBRE FCI: (nombre)\nIMPORTE o CANTIDAD: (número)\n"
+                        f"si la info es tabulable y esta completa incluir al final del mensaje (Confirmar si la solicitud esta correcta)")
                     respuesta = consultar_chatgpt(prompt)
 
                     if "la solicitud esta correcta" in respuesta.lower():
