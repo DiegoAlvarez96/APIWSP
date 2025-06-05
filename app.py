@@ -115,6 +115,7 @@ def procesar_mensaje(data):
                         historial_solicitudes[telefono] = respuesta
                         enviar_confirmacion_whatsapp(telefono, respuesta)
                     else:
+                        print("no se encontro similitud")
                         enviar_respuesta_con_menu(telefono, respuesta)
                 else:
                     enviar_bienvenida_con_botones(telefono)
@@ -296,7 +297,9 @@ def responder_con_rag(pregunta_usuario):
 
 
 def es_similar(texto, frase_objetivo, umbral=0.8):
+    print("BUSCANDO SIMILITUD")
     ratio = difflib.SequenceMatcher(None, texto.lower(), frase_objetivo.lower()).ratio()
+    print("ratio")
     return ratio >= umbral
 
 
