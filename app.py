@@ -111,7 +111,9 @@ def procesar_mensaje(data):
                         f"si la info es tabulable y esta completa incluir al final del mensaje (Confirmar si la solicitud está correcta)")
                     respuesta = consultar_chatgpt(prompt)
                     print(respuesta)
-                    if es_similar(respuesta.lower(), "confirmar la solicitud esta correcta"):
+
+                    
+                    if es_similar(respuesta.lower(), "confirmar si la solicitud esta correcta"):
                         print("se encontro la solicitud esta correcta")
                         historial_solicitudes[telefono] = respuesta
                         enviar_confirmacion_whatsapp(telefono, respuesta)
@@ -300,7 +302,7 @@ def responder_con_rag(pregunta_usuario):
 def es_similar(texto, frase_objetivo, umbral=0.8):
     print("BUSCANDO SIMILITUD")
     ratio = difflib.SequenceMatcher(None, texto.lower(), frase_objetivo.lower()).ratio()
-    print("ratio")
+    print(ratio)
     return ratio >= umbral
 
 
