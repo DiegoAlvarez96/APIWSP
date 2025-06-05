@@ -4,3 +4,5 @@ COMITENTE: (numero)
 FONDO: (debes buscar en el listado de fondos el mas parecido al que te mencionen)
 en caso de que sea una suscripcion te deben pasar el IMPORTE o MONTO
 en caso de que sea rescate te deben pasar cantidad o IMPORTE.
+
+Toda la informacion respecto de cada fondo esta en el excel, los que en la columna dicen "NO" es porque no estan habilitados y no se deben enviar.
