@@ -263,8 +263,11 @@ def enviar_bienvenida_con_botones(numero):
             }
         }
     }
-    requests.post(url, headers=headers, json=payload)
-    prin("mensaje de bienvenida enviado")
+    response = requests.post(url, headers=headers, json=payload)
+    print("mensaje de bienvenida enviado. Status:")
+    print(response.status_code)
+    print("Respuesta:", response.text)
+
     
 
 # === RAG ===
