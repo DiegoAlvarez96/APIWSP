@@ -187,7 +187,7 @@ def generar_json_para_api(texto_confirmado):
         messages=[{"role": "user", "content": prompt}]
     )
     logging.debug(f"json segun chat: {completion.text}")
-    print(completion.text)
+    print(completion.choices[0].message.content)  
     try:
         return json.loads(completion.choices[0].message.content)
     except Exception:
