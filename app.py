@@ -113,7 +113,7 @@ def procesar_mensaje(data):
                     print(respuesta)
 
                     
-                    if es_similar(respuesta.lower(), "confirmar si la solicitud esta correcta"):
+                    if es_similar(respuesta.lower(), "confirmar si la solicitud está correcta"):
                         print("se encontro la solicitud esta correcta")
                         historial_solicitudes[telefono] = respuesta
                         enviar_confirmacion_whatsapp(telefono, respuesta)
