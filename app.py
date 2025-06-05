@@ -26,7 +26,7 @@ estado_usuario = {}  # clave: telefono, valor: tipo de flujo ("GENERAL", "SUSCRI
 
 # === UTILIDADES ===
 def obtener_tabla_codigos():
-    path = "data/info fondos (fci).xlsx"
+    path = "data/INFO FONDOS (FCI).xlsx"
     if os.path.exists(path):
         df = pd.read_excel(path)
         return "\n".join(df.iloc[:, 0].astype(str).tolist())
@@ -106,10 +106,12 @@ def procesar_mensaje(data):
                     prompt = (
                         f"Interpretá y tabulá este mensaje:\n{texto}\n"
                         f"Tené en cuenta esta lista de fondos disponibles:\n{tabla_codigos}\n"
-                        f"Solo devolvé:\nOPERACIÓN: (SUSCRIPCIÓN o RESCATE)\nCOMITENTE: (número)\nNOMBRE FCI: (nombre)\nIMPORTE o CANTIDAD: (número)")
+                        f"Solo devolvé:\nOPERACIÓN: (SUSCRIPCIÓN o RESCATE)\nCOMITENTE: (número)\nNOMBRE FCI: (nombre)\nIMPORTE o CANTIDAD: (número)"\N
+                        f"si la info es tabulable y esta completa incluir al final del mensaje "Confirmar si la solicitud esta correcta")
                     respuesta = consultar_chatgpt(prompt)
 
                     if "la solicitud esta correcta" in respuesta.lower():
+                        print("se encontro la solicitud esta correcta")
                         historial_solicitudes[telefono] = respuesta
                         enviar_confirmacion_whatsapp(telefono, respuesta)
                     else:
