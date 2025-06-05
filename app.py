@@ -263,9 +263,9 @@ def enviar_bienvenida_con_botones(numero):
             "body": {"text": "¡Hola! Soy tu asistente virtual 🤖\nSeleccioná una opción para continuar:"},
             "action": {
                 "buttons": [
-                    {"type": "reply", "reply": {"id": "general", "title": "Consultas info general tesoreria"}},
-                    {"type": "reply", "reply": {"id": "suscripcion", "title": "Carga de SUSCRIPCION FCI"}},
-                    {"type": "reply", "reply": {"id": "rescate", "title": "Carga de RESCATE FCI"}}
+                    {"type": "reply", "reply": {"id": "general", "title": "Consultas teso"}},
+                    {"type": "reply", "reply": {"id": "suscripcion", "title": "Carga SUSCRIPCION"}},
+                    {"type": "reply", "reply": {"id": "rescate", "title": "Carga RESCATE"}}
                 ]
             }
         }
