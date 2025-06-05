@@ -88,10 +88,12 @@ def procesar_mensaje(data):
                 if telefono not in usuarios:
                     print("se envia mensaje de bienvenida")
                     enviar_bienvenida_con_botones(telefono)
+                    print("se salio del envio el msj de bienv")
                     usuarios[telefono] = datetime.now()
                     guardar_usuarios()
                     return
 
+                print("me fijo el flujo del usuario")
                 flujo = estado_usuario.get(telefono)
                 if flujo == "GENERAL":
                     print("se ingresa a general")
@@ -262,6 +264,8 @@ def enviar_bienvenida_con_botones(numero):
         }
     }
     requests.post(url, headers=headers, json=payload)
+    prin("mensaje de bienvenida enviado")
+    
 
 # === RAG ===
 def responder_con_rag(pregunta_usuario):
