@@ -110,7 +110,7 @@ def procesar_mensaje(data):
                         f"si la info es tabulable y esta completa incluir al final del mensaje (Confirmar si la solicitud esta correcta)")
                     respuesta = consultar_chatgpt(prompt)
 
-                   if es_similar(respuesta.lower(), "confirmar la solicitud esta correcta"):
+                    if es_similar(respuesta.lower(), "confirmar la solicitud esta correcta"):
                         print("se encontro la solicitud esta correcta")
                         historial_solicitudes[telefono] = respuesta
                         enviar_confirmacion_whatsapp(telefono, respuesta)
