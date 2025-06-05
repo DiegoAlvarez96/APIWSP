@@ -110,7 +110,7 @@ def procesar_mensaje(data):
                         f"si la info es tabulable y esta completa incluir al final del mensaje (Confirmar si la solicitud esta correcta)")
                     respuesta = consultar_chatgpt(prompt)
 
-                    if "la solicitud esta correcta" in respuesta.lower():
+                   if es_similar(respuesta.lower(), "confirmar la solicitud esta correcta"):
                         print("se encontro la solicitud esta correcta")
                         historial_solicitudes[telefono] = respuesta
                         enviar_confirmacion_whatsapp(telefono, respuesta)
@@ -127,6 +127,7 @@ def procesar_mensaje(data):
                 if payload == "confirmar_solicitud":
                     texto_original = historial_solicitudes.get(telefono, "")
                     if texto_original:
+                        print(texto_original)
                         json_generado = generar_json_para_api(texto_original)
                         enviar_respuesta_con_menu(telefono, f"📦 JSON generado:\n```{json.dumps(json_generado, indent=2)}```")
                     else:
@@ -292,6 +293,12 @@ def responder_con_rag(pregunta_usuario):
         ]
     )
     return respuesta.choices[0].message.content
+
+
+def es_similar(texto, frase_objetivo, umbral=0.8):
+    ratio = difflib.SequenceMatcher(None, texto.lower(), frase_objetivo.lower()).ratio()
+    return ratio >= umbral
+
 
 # === UTILIDADES EXTRAS ===
 @app.route('/usuarios', methods=['GET'])
