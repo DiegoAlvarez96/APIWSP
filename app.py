@@ -10,6 +10,7 @@ from openai import OpenAI
 from threading import Thread
 import pandas as pd
 import logging
+import difflib
 
 logging.basicConfig(filename="debug.log", level=logging.DEBUG)
 app = Flask(__name__)
@@ -107,9 +108,9 @@ def procesar_mensaje(data):
                         f"Interpretá y tabulá este mensaje:\n{texto}\n"
                         f"Tené en cuenta esta lista de fondos disponibles:\n{tabla_codigos}\n"
                         f"Solo devolvé:\nOPERACIÓN: (SUSCRIPCIÓN o RESCATE)\nCOMITENTE: (número)\nNOMBRE FCI: (nombre)\nIMPORTE o CANTIDAD: (número)\n"
-                        f"si la info es tabulable y esta completa incluir al final del mensaje (Confirmar si la solicitud esta correcta)")
+                        f"si la info es tabulable y esta completa incluir al final del mensaje (Confirmar si la solicitud está correcta)")
                     respuesta = consultar_chatgpt(prompt)
-                    pirnt(respuesta)
+                    print(respuesta)
                     if es_similar(respuesta.lower(), "confirmar la solicitud esta correcta"):
                         print("se encontro la solicitud esta correcta")
                         historial_solicitudes[telefono] = respuesta
@@ -145,7 +146,7 @@ def procesar_mensaje(data):
             
                 elif payload in ["general", "suscripcion", "rescate"]:
                     estado_usuario[telefono] = payload.upper()
-                    mensaje = "Perfecto. Por favor envíame los datos como texto plano."
+                    mensaje = "Perfecto. Por favor envíame la informacion."
                     enviar_respuesta_con_menu(telefono, mensaje)
 
 
