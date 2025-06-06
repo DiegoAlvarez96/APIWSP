@@ -99,19 +99,21 @@ def procesar_mensaje(data):
                     return
                 
                 flujo = estado_usuario.get(telefono)
-                flujo2= estado_usuario2.get(telefono)
+                #flujo2= estado_usuario2.get(telefono)
                 if flujo == "GENERAL":
                     print("se ingresa a general")
                     metadata = responder_con_rag(texto)
                     respuesta = consultar_chatgpt(f"Responder esta consulta: --{texto}-- usando solo esta información:\n{metadata}")
                     enviar_respuesta_con_menu(telefono, respuesta)
-                elif flujo == FCI:
-                elif flujo2 == "SUSC":
+                elif flujo == "FCI":
+                    enviar_SUSC_RESC_botones()
+                elif flujo == "SUSC":
+                    
                     print("se ingresa a susc")
                     prompt = (
                         f"Interpretá y tabulá este mensaje:\n{texto}\n"
-                        f"Tené en cuenta esta lista de fondos disponibles:\n{tabla_codigos}\n"
-                        f"Solo devolvé:\nOPERACIÓN: (SUSCRIPCIÓN)\nCOMITENTE: (número)\nNOMBRE FCI: (nombre)\nIMPORTE o CANTIDAD: (número)\n"
+                        f"para NOMBRE FCI Tenés que buscar el mas parecido en:\n{tabla_codigos}\n"
+                        f"Solo devolvé:\nOPERACIÓN: (SUSCRIPCIÓN)\nCOMITENTE: (número)\nNOMBRE FCI: (nombre segun tabla_codigo)\nIMPORTE:  (número en formato pesos $)\n"
                         f"si la info es tabulable y esta completa incluir al final del mensaje (Confirmar si la solicitud está correcta)")
                     respuesta = consultar_chatgpt(prompt)
                     print(respuesta)
@@ -119,8 +121,8 @@ def procesar_mensaje(data):
                     print("se ingresa a resc")
                     prompt = (
                         f"Interpretá y tabulá este mensaje:\n{texto}\n"
-                        f"Tené en cuenta esta lista de fondos disponibles:\n{tabla_codigos}\n"
-                        f"Solo devolvé:\nOPERACIÓN: (RESCATE)\nCOMITENTE: (número)\nNOMBRE FCI: (nombre)\nIMPORTE o CANTIDAD: (número)\n"
+                        f"para NOMBRE FCI Tenés que buscar el mas parecido en:\n{tabla_codigos}\n"
+                        f"Solo devolvé:\nOPERACIÓN: (RESCATE)\nCOMITENTE: (número)\nNOMBRE FCI: (nombre segun tabla_codigo)\nIMPORTE:  (número en formato pesos $) ó CANTIDAD: (número en formato pesos $), completar como importe si en el pensaje incluye $ o pesos si no incluye completar CANTIDAD. \n"
                         f"si la info es tabulable y esta completa incluir al final del mensaje (Confirmar si la solicitud está correcta)")
                     respuesta = consultar_chatgpt(prompt)
                     print(respuesta)
@@ -154,13 +156,15 @@ def procesar_mensaje(data):
                     historial_solicitudes.pop(telefono, None)
                     enviar_respuesta_whatsapp(telefono, "🚪 Sesión finalizada. Hasta luego.")
             
-                elif payload in ["general", "FCI", "ANULAR"]:
+                elif payload in ["general", "ANULAR"]:
                     estado_usuario[telefono] = payload.upper()
-                    mensaje = "Perfecto. Por favor envíame la informacion."
+                    mensaje = "Perfecto. Por favor envíame la consulta."
                     enviar_respuesta_con_menu(telefono, mensaje)
-                elif payload in ["SUSC", "RESC"]:
-                    estado_usuario2[telefono] = payload.upper()
-                    mensaje = "Perfecto. Por favor envíame la informacion."
+                elif payload == "FCI":
+                    enviar_SUSC_RESC_botones()
+                elif payload == "SUSC":
+                    estado_usuario[telefono] = payload.upper()
+                    mensaje = "Perfecto. Por favor envíame los datos para la suscripcion (COMITENT, FONDO Y CLASE, IMPORTE)."
                     enviar_respuesta_con_menu(telefono, mensaje)
 
 
@@ -316,8 +320,8 @@ def enviar_SUSC_RESC_botones(numero):
             "body": {"text": "Seleccioná una opción para continuar:"},
             "action": {
                 "buttons": [
-                    {"type": "reply", "reply": {"id": "SUSC", "title": "SUSCRIPCION"}},
-                    {"type": "reply", "reply": {"id": "RESC", "title": "RESCATE"}},
+                    {"type": "reply", "reply": {"id": "SUSC", "title": "🟢 SUSCRIPCION"}},
+                    {"type": "reply", "reply": {"id": "RESC", "title": "🔴 RESCATE"}},
                 ]
             }
         }
