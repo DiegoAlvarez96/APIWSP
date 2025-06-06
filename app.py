@@ -129,7 +129,7 @@ def procesar_mensaje(data):
                     prompt = (
                         f"Interpretá y tabulá este mensaje:\n{texto}\n"
                         f"para NOMBRE FCI Tenés que buscar el mas parecido en:\n{tabla_codigos}\n"
-                        f"Solo devolvé:\nOPERACIÓN: (RESCATE)\nCOMITENTE: (número)\nNOMBRE FCI: (nombre segun tabla_codigo)\nIMPORTE:  (número en formato pesos $) ó CANTIDAD: (número en formato pesos $), completar como importe si en el pensaje incluye $ o pesos si no incluye completar CANTIDAD. \n"
+                        f"Solo devolvé:\nOPERACIÓN: (RESCATE)\nCOMITENTE: (número)\nNOMBRE FCI: (nombre segun tabla_codigo)\nIMPORTE:  (número en formato pesos $) ó CANTIDAD: (número), completar como importe si en el pensaje incluye $ o pesos si no incluye completar CANTIDAD. \n"
                         f"si la info es tabulable y esta completa incluir al final del mensaje (Confirmar si la solicitud está correcta)")
                     respuesta = consultar_chatgpt(prompt)
                     print(respuesta)
@@ -191,11 +191,11 @@ def procesar_mensaje(data):
                     enviar_SUSC_RESC_botones(telefono)
                 elif payload == "SUSC":
                     estado_usuario[telefono] = payload.upper()
-                    mensaje = "Perfecto. Por favor envíame los datos para la suscripcion (COMITENT, FONDO Y CLASE, IMPORTE)."
+                    mensaje = "Perfecto. Por favor envíame los datos para la suscripcion:\nCOMITENTE: (número)\nNOMBRE FCI: (ej: Adcap ahorro pesos *CLASE A*)\nIMPORTE: ($ + importe o importe + pesos )."
                     enviar_respuesta_con_menu(telefono, mensaje)
                 elif payload == "RESC":
                     estado_usuario[telefono] = payload.upper()
-                    mensaje = "Perfecto. Por favor envíame los datos para el rescate (COMITENT, FONDO Y CLASE, y aclarar si es por IMPORTE o CANTIDAD)."
+                    mensaje = "Perfecto. Por favor envíame los datos para el rescate:\nCOMITENTE: (número)\nNOMBRE FCI: (ej: Adcap ahorro pesos *CLASE A*)\nIMPORTE: ($ + importe o importe + pesos )\n ó\n CANTIDAD: (número),."
                     enviar_respuesta_con_menu(telefono, mensaje)
 
 
