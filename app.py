@@ -99,7 +99,7 @@ def procesar_mensaje(data):
                     return
                 
                 flujo = estado_usuario.get(telefono)
-                #flujo2= estado_usuario2.get(telefono)
+                flujoF= estado_usuarioF.get(telefono)
                 if flujo == "GENERAL":
                     print("se ingresa a general")
                     metadata = responder_con_rag(texto)
@@ -117,6 +117,13 @@ def procesar_mensaje(data):
                         f"si la info es tabulable y esta completa incluir al final del mensaje (Confirmar si la solicitud está correcta)")
                     respuesta = consultar_chatgpt(prompt)
                     print(respuesta)
+                    if "confirmar si la solicitud está correcta" in  respuesta.lower():
+                        print("se confirmo la SUSCRIPCON esta correcta")
+                        historial_solicitudes[telefono] = respuesta
+                        enviar_confirmacion_whatsapp(telefono, respuesta)
+                    else:
+                        print("no se encontro similitud")
+                        enviar_respuesta_con_menu(telefono, respuesta)
                 elif flujo == "RESC":
                     print("se ingresa a resc")
                     prompt = (
@@ -126,6 +133,13 @@ def procesar_mensaje(data):
                         f"si la info es tabulable y esta completa incluir al final del mensaje (Confirmar si la solicitud está correcta)")
                     respuesta = consultar_chatgpt(prompt)
                     print(respuesta)
+                    if "confirmar si la solicitud está correcta" in  respuesta.lower():
+                        print("se confirmo rescate orrecta")
+                        historial_solicitudes[telefono] = respuesta
+                        enviar_confirmacion_whatsapp(telefono, respuesta)
+                    else:
+                        print("no se encontro similitud")
+                        enviar_respuesta_con_menu(telefono, respuesta)
                     
                 elif flujo == "ANULAR":
                     print("se ingresa a ANULAR")
@@ -143,7 +157,13 @@ def procesar_mensaje(data):
                     if texto_original:
                         print(texto_original)
                         json_generado = generar_json_para_api(texto_original)
-                        enviar_respuesta_con_menu(telefono, f"📦 JSON generado:\n```{json.dumps(json_generado, indent=2)}```")
+                        if es_json_valido(texto):
+                            print("✔️ Es JSON válido")
+                            enviar_respuesta_con_menu(telefono, f"📦 JSON generado:\n{json.dumps(json_generado, indent=2)}")
+                        else:
+                            print("❌ No es JSON")
+                            enviar_respuesta_con_menu(telefono, json_generado)
+                        
                     else:
                         enviar_respuesta_con_menu(telefono, "⚠️ No se encontró la solicitud anterior.")
             
@@ -156,15 +176,19 @@ def procesar_mensaje(data):
                     historial_solicitudes.pop(telefono, None)
                     enviar_respuesta_whatsapp(telefono, "🚪 Sesión finalizada. Hasta luego.")
             
-                elif payload in ["general", "ANULAR"]:
+                elif payload == "general":
                     estado_usuario[telefono] = payload.upper()
                     mensaje = "Perfecto. Por favor envíame la consulta."
                     enviar_respuesta_con_menu(telefono, mensaje)
                 elif payload == "FCI":
-                    enviar_SUSC_RESC_botones()
+                    enviar_SUSC_RESC_botones(telefono)
                 elif payload == "SUSC":
                     estado_usuario[telefono] = payload.upper()
                     mensaje = "Perfecto. Por favor envíame los datos para la suscripcion (COMITENT, FONDO Y CLASE, IMPORTE)."
+                    enviar_respuesta_con_menu(telefono, mensaje)
+                elif payload == "RESC":
+                    estado_usuario[telefono] = payload.upper()
+                    mensaje = "Perfecto. Por favor envíame los datos para el rescate (COMITENT, FONDO Y CLASE, y aclarar si es por IMPORTE o CANTIDAD)."
                     enviar_respuesta_con_menu(telefono, mensaje)
 
 
@@ -290,7 +314,6 @@ def enviar_bienvenida_con_botones(numero):
                 "buttons": [
                     {"type": "reply", "reply": {"id": "general", "title": "CONSULTAS GENERALES"}},
                     {"type": "reply", "reply": {"id": "FCI", "title": "OPERAR FCI"}},
-                    {"type": "reply", "reply": {"id": "ANULAR", "title": "ANULAR SOLICITUD FCI"}}
                 ]
             }
         }
@@ -322,6 +345,7 @@ def enviar_SUSC_RESC_botones(numero):
                 "buttons": [
                     {"type": "reply", "reply": {"id": "SUSC", "title": "🟢 SUSCRIPCION"}},
                     {"type": "reply", "reply": {"id": "RESC", "title": "🔴 RESCATE"}},
+                    {"type": "reply", "reply": {"id": "ANULAR", "title": "❌ANULAR SOLICITUD FCI"}}
                 ]
             }
         }
