@@ -106,7 +106,7 @@ def procesar_mensaje(data):
                     respuesta = consultar_chatgpt(f"Responder esta consulta: --{texto}-- usando solo esta información:\n{metadata}")
                     enviar_respuesta_con_menu(telefono, respuesta)
                 elif flujo == "FCI":
-                    enviar_SUSC_RESC_botones()
+                    enviar_SUSC_RESC_botones(telefono)
                 elif flujo == "SUSC":
                     
                     print("se ingresa a susc")
@@ -127,7 +127,7 @@ def procesar_mensaje(data):
                     respuesta = consultar_chatgpt(prompt)
                     print(respuesta)
                     
-                elif flujo == ANULAR:
+                elif flujo == "ANULAR":
                     print("se ingresa a ANULAR")
                     enviar_respuesta_con_menu(telefono, "Por favor pasame el id a anular")
                 else:
@@ -288,9 +288,9 @@ def enviar_bienvenida_con_botones(numero):
             "body": {"text": "¡Hola! Soy tu asistente virtual 🤖\nSeleccioná una opción para continuar:"},
             "action": {
                 "buttons": [
-                    {"type": "reply", "reply": {"id": "general", "title": "Consultas teso"}},
+                    {"type": "reply", "reply": {"id": "general", "title": "CONSULTAS GENERALES"}},
                     {"type": "reply", "reply": {"id": "FCI", "title": "OPERAR FCI"}},
-                    {"type": "reply", "reply": {"id": "ANULAR", "title": "ANULAR SOLICITUD"}}
+                    {"type": "reply", "reply": {"id": "ANULAR", "title": "ANULAR SOLICITUD FCI"}}
                 ]
             }
         }
