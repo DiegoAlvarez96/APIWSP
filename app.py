@@ -157,15 +157,18 @@ def procesar_mensaje(data):
                     if texto_original:
                         print(texto_original)
                         json_generado = generar_json_para_api(texto_original)
-                        if es_json_valido(texto):
+                        if es_json_valido(json_generado):
                             print("✔️ Es JSON válido")
                             enviar_respuesta_con_menu(telefono, f"📦 JSON generado:\n{json.dumps(json_generado, indent=2)}")
                         else:
                             print("❌ No es JSON")
+                            print(json_generado)
+                            print("texto original↓")
+                            print(texto_original)
                             enviar_respuesta_con_menu(telefono, json_generado)
                         
                     else:
-                        enviar_respuesta_con_menu(telefono, "⚠️ No se encontró la solicitud anterior.")
+                        enviar_respuesta_con_menu(telefono, "⚠️ No se encontró la solicitud.")
             
                 elif payload == "menu_inicial":
                     enviar_bienvenida_con_botones(telefono)
@@ -371,6 +374,13 @@ def responder_con_rag(pregunta_usuario):
     )
     return respuesta.choices[0].message.content
 
+
+def es_json_valido(texto_original):
+    try:
+        json.loads(texto_original)
+        return True
+    except ValueError:
+        return False
 
 def es_similar(texto, frase_objetivo, umbral=0.8):
     print("BUSCANDO SIMILITUD")
