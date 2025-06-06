@@ -143,7 +143,7 @@ def procesar_mensaje(data):
                     
                 elif flujo == "ANULAR":
                     print("se ingresa a ANULAR")
-                    enviar_respuesta_con_menu(telefono, "Por favor pasame el id a anular")
+                    enviar_respuesta_con_menu(telefono, "confirma anular la siguiente operacion: (mostrar ctte; fci; operacion; cantidad;importe; fecha concertacion)")
                 else:
                     enviar_bienvenida_con_botones(telefono)
                     estado_usuario[telefono] = None
@@ -196,6 +196,10 @@ def procesar_mensaje(data):
                 elif payload == "RESC":
                     estado_usuario[telefono] = payload.upper()
                     mensaje = "Perfecto. Por favor envíame los datos para el rescate:\nCOMITENTE: (número)\nNOMBRE FCI: (ej: Adcap ahorro pesos *CLASE A*)\nIMPORTE: ($ + importe o importe + pesos )\n ó\n CANTIDAD: (número),."
+                    enviar_respuesta_con_menu(telefono, mensaje)
+                elif payload == "ANULAR":
+                    estado_usuario[telefono] = payload.upper()
+                    mensaje = "Por favor enviame el ID de la solicitud a anular."
                     enviar_respuesta_con_menu(telefono, mensaje)
 
 
