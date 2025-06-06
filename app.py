@@ -99,7 +99,7 @@ def procesar_mensaje(data):
                     return
                 
                 flujo = estado_usuario.get(telefono)
-                flujoF= estado_usuarioF.get(telefono)
+                #flujoF= estado_usuarioF.get(telefono)
                 if flujo == "GENERAL":
                     print("se ingresa a general")
                     metadata = responder_con_rag(texto)
