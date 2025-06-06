@@ -343,9 +343,9 @@ def enviar_SUSC_RESC_botones(numero):
             "body": {"text": "Seleccioná una opción para continuar:"},
             "action": {
                 "buttons": [
-                    {"type": "reply", "reply": {"id": "SUSC", "title": "🟢 SUSCRIPCION"}},
-                    {"type": "reply", "reply": {"id": "RESC", "title": "🔴 RESCATE"}},
-                    {"type": "reply", "reply": {"id": "ANULAR", "title": "❌ANULAR SOLICITUD FCI"}}
+                    {"type": "reply", "reply": {"id": "SUSC", "title": "SUSCRIPCION"}},
+                    {"type": "reply", "reply": {"id": "RESC", "title": "RESCATE"}},
+                    {"type": "reply", "reply": {"id": "ANULAR", "title": "ANULAR SOL. FCI"}}
                 ]
             }
         }
