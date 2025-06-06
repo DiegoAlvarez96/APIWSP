@@ -156,8 +156,11 @@ def procesar_mensaje(data):
                     texto_original = historial_solicitudes.get(telefono, "")
                     if texto_original:
                         print(texto_original)
+                        
                         json_generado = generar_json_para_api(texto_original)
-                        if es_json_valido(json_generado):
+                        json_string = json.dumps(json_generado)  # convertimos a string
+                        
+                        if es_json_valido(json_string):
                             print("✔️ Es JSON válido")
                             enviar_respuesta_con_menu(telefono, f"📦 JSON generado:\n{json.dumps(json_generado, indent=2)}")
                         else:
@@ -166,6 +169,7 @@ def procesar_mensaje(data):
                             print("texto original↓")
                             print(texto_original)
                             enviar_respuesta_con_menu(telefono, json_generado)
+
                         
                     else:
                         enviar_respuesta_con_menu(telefono, "⚠️ No se encontró la solicitud.")
