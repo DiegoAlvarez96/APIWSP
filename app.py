@@ -128,7 +128,7 @@ def procesar_mensaje(data):
                     print("se ingresa a resc")
                     prompt = (
                         f"Interpretá y tabulá este mensaje:\n{texto}\n"
-                        f"para NOMBRE FCI Tenés que buscar el mas parecido en:\n{tabla_codigos}\n"
+                        f"para NOMBRE FCI Tenés que buscar el mas parecido 80% o mas  en:\n{tabla_codigos}\n"
                         f"Solo devolvé:\nOPERACIÓN: (RESCATE)\nCOMITENTE: (número)\nNOMBRE FCI: (nombre segun tabla_codigo)\nIMPORTE:  (número en formato pesos $) ó CANTIDAD: (número), completar como importe si en el pensaje incluye $ o pesos si no incluye completar CANTIDAD. \n"
                         f"si la info es tabulable y esta completa incluir al final del mensaje (Confirmar si la solicitud está correcta)")
                     respuesta = consultar_chatgpt(prompt)
@@ -223,6 +223,7 @@ def generar_json_para_api(texto_confirmado):
         "Armame el JSON para enviar a la API. Si es SUSCRIPCIÓN:\n"
         'POST /broker/assetManager/mutual_funds/ABREVIATURA/requests/subscription\n'
         'Body:\n{"amount": 100, "bank_account_id": ""}\n\n'
+        "Devolveme solo el JSON. Nada más NI UN PUNTO NI LETRA DE MAS."
         "Si es RESCATE y se especificó cantidad:\n"
         '{"isTotal": false, "isAmount": false, "shares": 100, "bank_account_id": ""}\n\n'
         "Si es RESCATE y se especificó importe:\n"
